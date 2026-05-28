@@ -1,13 +1,29 @@
 {
-  "name": "drone-swarm-simulator",
+  "name": "drone-swarm",
+  "private": true,
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gxnda/drone-swarm-simulator.git"
+  },
   "scripts": {
-    "build": "tsc"
+    "dev": "pnpm --filter @drone-swarm/web dev",
+    "build": "pnpm -r build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "bench": "pnpm --filter @drone-swarm/benchmark bench",
+    "lint": "eslint packages apps --ext .ts,.tsx",
+    "typecheck": "pnpm -r typecheck"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
-  },
-  "private": true
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.7",
+    "@typescript-eslint/eslint-plugin": "^8.60.0",
+    "@typescript-eslint/parser": "^8.60.0",
+    "eslint": "^10.4.0",
+    "prettier": "^3.8.3",
+    "tsx": "^4.22.3"
+  }
 }
