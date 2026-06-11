@@ -1,0 +1,1 @@
+export type DroneId = string & {readonly __brand: "DroneId"};

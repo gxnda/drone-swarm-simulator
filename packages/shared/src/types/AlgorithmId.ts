@@ -1,0 +1,1 @@
+export type AlgorithmId = string & {__brand: "AlgorithmId"};
