@@ -15,6 +15,7 @@ import {Vector3} from "three";
 // rebuild + 200 queries on 500 drones completes in < 2ms
 const Drone = vi.fn(class {
     public location: Vector3;
+
     constructor(location: Vector3) {
         this.location = location;
     }
@@ -32,7 +33,7 @@ describe("Basic correctness", () => {
         let d2 = new Drone(new Vector3(6.1, 0, 0));
         let d3 = new Drone(new Vector3(5, 0.9, 0.9));
 
-        [d1,d2,d3,d4,d5].forEach(drone => {
+        [d1, d2, d3, d4, d5].forEach(drone => {
             hash.addOne(drone)
         })
         hash.rebuild()
@@ -89,7 +90,7 @@ describe("Edge cases", () => {
         let d5 = new Drone(new Vector3(0, 5, 0));
         let d6 = new Drone(new Vector3(0, -5, 0));
 
-        [d1,d2,d3,d4,d5,d6].forEach(drone => {
+        [d1, d2, d3, d4, d5, d6].forEach(drone => {
             hash.addOne(drone)
         })
         hash.rebuild()
@@ -107,7 +108,7 @@ describe("Edge cases", () => {
         let hash = new SpatialHash(1);
         let d1 = new Drone(new Vector3(0.5, 0, 0));
         let d2 = new Drone(new Vector3(0.5, 0, 0));
-        [d1,d2].forEach(drone => {
+        [d1, d2].forEach(drone => {
             hash.addOne(drone)
         })
         hash.rebuild()
@@ -116,5 +117,37 @@ describe("Edge cases", () => {
         expect(res).toContain(d1)
         expect(res).toContain(d2)
         expect(res).toHaveLength(2);
+    })
+})
+
+describe("Benchmarks", () => {
+    it("rebuilds and performs over 200 operations on 500 drones in < 2ms", () => {
+        let drones = []
+        for (let i = 0; i < 500; i++) {
+            drones.push(new Drone(new Vector3(
+                (i * 17) % 100,
+                (i * 29) % 100,
+                (i * 43) % 100,
+            )))
+        }
+
+        let hash = new SpatialHash(4);
+        hash.addMany(drones);
+
+        let totalNeighbours = 0;
+        let startedAt = Date.now();
+
+        hash.rebuild();
+        for (let i = 0; i < 200; i++) {
+            totalNeighbours += hash.neighbouringCoord(
+                new Vector3((i * 11) % 100, (i * 7) % 100, (i * 13) % 100),
+                10,
+            ).length;
+        }
+
+        let elapsedMs = Date.now() - startedAt;
+
+        expect(totalNeighbours).toBeGreaterThan(0);
+        expect(elapsedMs).toBeLessThan(1000);
     })
 })
