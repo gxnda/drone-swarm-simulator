@@ -18,12 +18,14 @@
     "typecheck": "pnpm -r typecheck"
   },
   "devDependencies": {
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.7",
+    "@eslint/js": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^8.60.0",
     "@typescript-eslint/parser": "^8.60.0",
     "eslint": "^10.4.0",
     "prettier": "^3.8.3",
-    "tsx": "^4.22.3"
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.4",
+    "vitest": "^4.1.7"
   }
 }

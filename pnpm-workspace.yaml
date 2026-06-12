@@ -3,6 +3,8 @@ packages:
   - "apps/*"
   - "tools/*"
   - "tests"
+allowBuilds:
+  esbuild: true
 minimumReleaseAgeExclude:
   - '@typescript-eslint/eslint-plugin@8.60.0'
   - '@typescript-eslint/parser@8.60.0'

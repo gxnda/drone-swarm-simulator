@@ -1,1 +1,1 @@
-export {};
+export type { DroneId } from "./types/DroneId";
