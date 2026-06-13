@@ -1,9 +1,10 @@
 import {AlgorithmId} from "@drone-swarm/shared";
 import {Vector3} from "three";
 
-interface WorldConfig {
+export interface WorldConfig {
   readonly droneCount: number;
   readonly worldSize: Vector3;
+  readonly chunkSize: number;
   // readonly spawnStrategy: SpawnStrategy;
   readonly algorithmId: AlgorithmId;
   // readonly algorithmConfig: AlgorithmConfig;

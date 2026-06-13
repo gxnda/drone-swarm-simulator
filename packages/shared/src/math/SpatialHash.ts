@@ -12,7 +12,7 @@ export class SpatialHash<Type extends {location: Vector3}> {
 
     public chunkSize: number;
     private chunks: Map<string, Map<string, Array<Type>>>
-    private items: Array<Type>;
+    public items: Array<Type>;
 
     constructor(cellSize: number) {
         this.chunkSize = cellSize;
@@ -21,7 +21,7 @@ export class SpatialHash<Type extends {location: Vector3}> {
     }
 
     private static ChunkCoordToVector3(coords: string): Vector3 {
-        let firstThree = coords.split(" ").slice(0, 3);
+        const firstThree = coords.split(" ").slice(0, 3);
         return new Vector3(...firstThree.map(parseFloat));
     }
 
@@ -30,7 +30,7 @@ export class SpatialHash<Type extends {location: Vector3}> {
     }
 
     private static isValidChunkCoord(coords: string): boolean {
-        let vec = SpatialHash.ChunkCoordToVector3(coords)
+        const vec = SpatialHash.ChunkCoordToVector3(coords)
         return SpatialHash.isVecValidChunkCoord(vec)
     }
 
@@ -60,8 +60,8 @@ export class SpatialHash<Type extends {location: Vector3}> {
     }
 
     private insertItem(item: Type, coord: Vector3) {
-        let chunk = this.getChunkContaining(coord)
-        let stringCoord = SpatialHash.Vector3ToChunkCoord(coord);
+        const chunk = this.getChunkContaining(coord)
+        const stringCoord = SpatialHash.Vector3ToChunkCoord(coord);
         let locationArray = chunk.get(stringCoord);
         if (!locationArray) {
             locationArray = new Array<Type>();
@@ -92,9 +92,9 @@ export class SpatialHash<Type extends {location: Vector3}> {
     }
 
     private getNeighboursInChunk(chunk: Map<string, Array<Type>>, coord: Vector3, radius: number): Array<Type> {
-        let neighbours = new Array<Type>;
+        const neighbours = new Array<Type>;
         chunk.forEach((itemArray, c) => {
-            let cVec = SpatialHash.ChunkCoordToVector3(c);
+            const cVec = SpatialHash.ChunkCoordToVector3(c);
             if (coord.distanceTo(cVec) <= radius) {
                 neighbours.push(...itemArray)
             }
@@ -109,9 +109,8 @@ export class SpatialHash<Type extends {location: Vector3}> {
         const maxY = Math.floor((coord.y + radius) / this.chunkSize);
         const minZ = Math.floor((coord.z - radius) / this.chunkSize);
         const maxZ = Math.floor((coord.z + radius) / this.chunkSize);
-        let neighbours = new Array<Type>();
+        const neighbours = new Array<Type>();
         // check all neighbouring chunks (including diagonal and local chunk)
-        let delta = new Vector3();
         for (let cx = minX; cx <= maxX; cx++) {
             for (let cy = minY; cy <= maxY; cy++) {
                 for (let cz = minZ; cz <= maxZ; cz++) {
@@ -127,7 +126,7 @@ export class SpatialHash<Type extends {location: Vector3}> {
     }
 
     public neighbouringItem(item: Type, radius: number = this.chunkSize): Array<Type> {
-        let res = this.neighbouringCoord(item.location, radius);
+        const res = this.neighbouringCoord(item.location, radius);
         return res.filter(el => el != item);
     }
 
