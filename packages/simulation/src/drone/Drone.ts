@@ -7,6 +7,7 @@ export class Drone {
   public location: Vector3;
   public orientation: Quaternion;
   public velocity: Vector3 = new Vector3(0, 0, 0);
+  public acceleration: Vector3 = new Vector3(0, 0, 0);
 
   public communicationRange: number;
 
@@ -51,6 +52,12 @@ export class Drone {
 
   public setState(state: DroneState) {
     this.state = state;
+  }
+
+  public step(stepLength: number) {
+    // TODO: Should it accelerate then move, or move then accelerate?
+    this.velocity.addScaledVector(this.acceleration, stepLength);
+    this.location.addScaledVector(this.velocity, stepLength);
   }
 
   public distanceTo(other: Drone): number {

@@ -25,6 +25,10 @@ export class World {
     this.spatialHash.addMany(drones);
   }
 
+  public getDrones(): Drone[] {
+    return this.spatialHash.items;
+  }
+
   public getActiveDrones(): Drone[] {
     return this.spatialHash.items.filter(drone => drone.isActive());
   }
