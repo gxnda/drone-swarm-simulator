@@ -73,11 +73,15 @@ export class SpatialHash<Type extends SpatialEntity> {
     }
 
     private addToChunk(chunk: Map<string, Type[]>, stringCoord: string, item: Type): Map<string, Type[]> {
+        // Adds item to chunk at given coord, keeps a list at that coord
+        // incase there is overlap, but disallows duplicate items.
         let locationArray = chunk.get(stringCoord);
         if (!locationArray) {
             locationArray = new Array<Type>();
         }
-        locationArray.push(item);
+        if (!locationArray.includes(item)) {
+            locationArray.push(item);
+        }
         return chunk.set(stringCoord, locationArray);
     }
 
@@ -92,13 +96,18 @@ export class SpatialHash<Type extends SpatialEntity> {
             const min = box.min.clone().divideScalar(this.chunkSize).floor();
             const max = box.max.clone().divideScalar(this.chunkSize).floor();
 
+            let lastChunk: Map<string, Type[]> | undefined;
+            const iterCoord = new Vector3();
             for (let x = min.x; x <= max.x; x++) {
                 for (let y = min.y; y <= max.y; y++) {
                     for (let z = min.z; z <= max.z; z++) {
-                        const coord = new Vector3(x, y, z);
-                        const chunk = this.getSpecificChunk(SpatialHash.Vector3ToChunkCoord(coord));
-                        const stringCoord = SpatialHash.Vector3ToChunkCoord(coord);
+                        iterCoord.set(x, y, z);
+                        const chunk = this.getSpecificChunk(SpatialHash.Vector3ToChunkCoord(iterCoord));
+
+                        if (chunk === lastChunk) continue;
+                        const stringCoord = SpatialHash.Vector3ToChunkCoord(iterCoord);
                         this.addToChunk(chunk, stringCoord, item);
+                        lastChunk = chunk;
                     }
                 }
             }
@@ -135,6 +144,20 @@ export class SpatialHash<Type extends SpatialEntity> {
             }
         });
         return neighbours;
+    }
+
+    public getBoxesInChunk(chunk: Map<string, Array<Type>>) {
+        return Array.from(chunk.values())
+          .flat()
+          .filter(item => "box" in item)
+          .map(item => item.box) as Array<Box3>;
+    }
+
+    public getPointsInChunk(chunk: Map<string, Array<Type>>) {
+        return Array.from(chunk.values())
+          .flat()
+          .filter(item => "location" in item)
+          .map(item => item.location) as Array<Vector3>;
     }
 
     public neighbouringCoord(coord: Vector3, radius: number = this.chunkSize): Array<Type> {
@@ -193,15 +216,7 @@ export class SpatialHash<Type extends SpatialEntity> {
     }
 
     public hasContainingBox(p: Vector3): boolean {
-        const chunk = this.getChunkContaining(p);
-        for (const [, items] of chunk) {
-            for (const item of items) {
-                if (!item.box) continue;
-                if (item.box.containsPoint(p)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        const boxes = this.getBoxesInChunk(this.getChunkContaining(p));
+        return boxes.some(box => box.containsPoint(p));
     }
 }
