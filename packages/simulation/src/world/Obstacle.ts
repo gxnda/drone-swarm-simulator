@@ -1,16 +1,28 @@
-import {Vector3} from "three";
+import {Box3, Vector3} from "three";
 
-export type Obstacle =
-  | {type: "box"; centre: Vector3; p1: Vector3; p2: Vector3; p3: Vector3 }
-  | {type: "circle"; centre: Vector3; radius: number};
+export type SerialisedObstacle =
+  | { type: "box"; min: [number,number,number]; max: [number,number,number] };
 
-export function obstacleContains(obstacle: Obstacle, p: Vector3) {
-  const centredPoint = p.sub(obstacle.centre);
-  if (obstacle.type === "box") {
-    const p1p2cross = obstacle.p1.cross(obstacle.p2);
-    const p1p3cross = obstacle.p1.cross(obstacle.p3);
-    const p2p3cross = obstacle.p2.cross(obstacle.p3);
+export type Obstacle = { box: Box3 };
 
-
+export function deserialise(o: SerialisedObstacle): Obstacle {
+  if (o.type === "box") {
+    return {
+      box: new Box3(new Vector3(...o.min), new Vector3(...o.max))
+    };
+  } else {
+    throw new Error("Unknown obstacle");
   }
+}
+
+export function obstacleContains(o: Obstacle, p: Vector3): boolean {
+    return o.box.containsPoint(p)
+}
+
+export function serialise(obstacle: Obstacle): SerialisedObstacle {
+    return {
+      type: "box",
+      min: [obstacle.box.min.x, obstacle.box.min.y, obstacle.box.min.z],
+      max: [obstacle.box.max.x, obstacle.box.max.y, obstacle.box.max.z]
+    };
 }
