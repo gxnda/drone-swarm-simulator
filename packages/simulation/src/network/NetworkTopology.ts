@@ -7,6 +7,16 @@ export class NetworkTopology {
     return this.adjacency.get(id) ?? new Set();
   }
 
+  public getAll(): Set<DroneId> {
+    const all: Set<DroneId> = new Set(this.adjacency.keys());
+    for (const neighbors of this.adjacency.values()) {
+      for (const neighbor of neighbors) {
+        all.add(neighbor);
+      }
+    }
+    return all
+  }
+
   private dfs(id: DroneId): Set<DroneId> {
     const seen: Set<DroneId> = new Set([id]);
     const stack = [id];
@@ -24,7 +34,7 @@ export class NetworkTopology {
     return seen;
   }
 
-  private bfs(id: DroneId): Set<DroneId> {
+  private bfsAndIters(id: DroneId) {
     const seen: Set<DroneId> = new Set([id]);
     const queue: DroneId[] = [id];
     let current: DroneId;
@@ -40,7 +50,15 @@ export class NetworkTopology {
           seen.add(nId);
         }});
     }
-    return seen;
+    return {seen: seen, i: i};
+  }
+
+  private bfsItersRequired(id: DroneId): number {
+    return this.bfsAndIters(id)["i"];
+  }
+
+  public bfs(id: DroneId): Set<DroneId> {
+    return this.bfsAndIters(id)["seen"];
   }
 
   public isLinked(a: DroneId, b: DroneId): boolean {
@@ -71,13 +89,7 @@ export class NetworkTopology {
   }
 
   public getConnectedComponents(): Map<DroneId, Set<DroneId>> {
-    let remaining: Set<DroneId> = new Set(this.adjacency.keys());
-    // If it's directed we might be missing receivers
-    for (const neighbors of this.adjacency.values()) {
-      for (const neighbor of neighbors) {
-        remaining.add(neighbor);
-      }
-    }
+    let remaining = this.getAll();
     let current: DroneId;
     const connectedComponents: Map<DroneId, Set<DroneId>> = new Map();
     while (remaining.size > 0) {
@@ -89,4 +101,37 @@ export class NetworkTopology {
     return connectedComponents
   }
 
+  public isConnected(): boolean {
+    return this.getConnectedComponents().size === 1
+  }
+
+  public isPartitioned(): boolean {
+    return this.getConnectedComponents().size > 1
+  }
+
+  public getDiameter(): number {
+    // longest minimum communication distance between two nodes
+    let maxDiameter = 0;
+    this.getAll().forEach((neighbor) => {
+      maxDiameter = Math.max(maxDiameter, this.bfsItersRequired(neighbor));
+    })
+    return maxDiameter;
+  }
+  
+  public getAverageDegree(): number {
+    const all = this.getAll();
+    let totalDegree = 0;
+    all.forEach((neighbor) => totalDegree += this.getDegree(neighbor));
+    return totalDegree / all.size;
+  }
+
+  public getEdges(): ReadonlyArray<[DroneId, DroneId]> {
+    const edges: [DroneId, DroneId][] = [];
+    this.adjacency.keys().forEach((key) => {
+      this.adjacency.get(key)!.forEach((neighbor) => {
+        edges.push([neighbor, neighbor]);
+      })
+    })
+    return edges as ReadonlyArray<[DroneId, DroneId]>;
+  }
 }
