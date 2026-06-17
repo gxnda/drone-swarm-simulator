@@ -1,26 +1,33 @@
 import {Box3, Vector3} from "three";
 import {SerialisedObstacle} from "@drone-swarm/shared";
 
-export type Obstacle = { box: Box3 };
+export class Obstacle {
+  box: Box3;
 
-export function deserialise(o: SerialisedObstacle): Obstacle {
-  if (o.type === "box") {
+  constructor(box: Box3) {
+    this.box = box;
+  }
+
+  public static deserialise(o: SerialisedObstacle): Obstacle {
+    if (o.type === "box") {
+      return new Obstacle(
+        new Box3(new Vector3(...o.min), new Vector3(...o.max))
+      );
+    } else {
+      throw new Error("Unknown obstacle");
+    }
+  }
+
+  public contains(o: Obstacle, p: Vector3): boolean {
+    return o.box.containsPoint(p)
+  }
+
+  public serialise(): SerialisedObstacle {
     return {
-      box: new Box3(new Vector3(...o.min), new Vector3(...o.max))
+      type: "box",
+      min: [this.box.min.x, this.box.min.y, this.box.min.z],
+      max: [this.box.max.x, this.box.max.y, this.box.max.z]
     };
-  } else {
-    throw new Error("Unknown obstacle");
   }
 }
 
-export function obstacleContains(o: Obstacle, p: Vector3): boolean {
-    return o.box.containsPoint(p)
-}
-
-export function serialise(obstacle: Obstacle): SerialisedObstacle {
-    return {
-      type: "box",
-      min: [obstacle.box.min.x, obstacle.box.min.y, obstacle.box.min.z],
-      max: [obstacle.box.max.x, obstacle.box.max.y, obstacle.box.max.z]
-    };
-}
