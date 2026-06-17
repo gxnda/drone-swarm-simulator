@@ -1,7 +1,7 @@
 // @vitest-environment node
 
 import {describe, expect, it, vi} from "vitest";
-import {SpatialHash} from "../../src/math/SpatialHash";
+import {SpatialHash} from "../../src";
 import {Vector3} from "three";
 
 
@@ -23,40 +23,43 @@ const Drone = vi.fn(class {
 
 describe("Basic correctness", () => {
     it('should only return drones within radius', () => {
-        let hash = new SpatialHash(0.4);
+        const hash = new SpatialHash(0.4);
         // in
-        let d1 = new Drone(new Vector3(5, 0, 0));
-        let d4 = new Drone(new Vector3(5, 0, 0.5));
-        let d5 = new Drone(new Vector3(5.1, 0.1, 0.1));
+        const d1 = new Drone(new Vector3(5, 0, 0));
+        const d4 = new Drone(new Vector3(5, 0, 0.5));
+        const d5 = new Drone(new Vector3(5.1, 0.1, 0.1));
+        const d6 = new Drone(new Vector3(4.05, 0, 0));
 
         // out
-        let d2 = new Drone(new Vector3(6.1, 0, 0));
-        let d3 = new Drone(new Vector3(5, 0.9, 0.9));
+        const d2 = new Drone(new Vector3(6.1, 0, 0));
+        const d3 = new Drone(new Vector3(5, 0.9, 0.9));
 
-        [d1, d2, d3, d4, d5].forEach(drone => {
+        [d1, d2, d3, d4, d5, d6].forEach(drone => {
             hash.addOne(drone)
         })
         hash.rebuild()
 
-        let res = hash.neighbouringCoord(new Vector3(5, 0, 0), 1);
+        const res = hash.neighbouringCoord(new Vector3(5, 0, 0), 1);
+        console.log(res)
         expect(res).toContain(d1);
         expect(res).toContain(d4);
         expect(res).toContain(d5);
+        expect(res).toContain(d6);
         expect(res).not.toContain(d2);
         expect(res).not.toContain(d3);
     });
     it('neighbour finding should exclude the drone itself', () => {
-        let hash = new SpatialHash(0.4);
-        let d1 = new Drone(new Vector3(5, 0, 0));
+        const hash = new SpatialHash(0.4);
+        const d1 = new Drone(new Vector3(5, 0, 0));
         hash.addOne(d1);
         hash.rebuild();
-        let res = hash.neighbouringItem(d1, 1);
+        const res = hash.neighbouringItem(d1, 1);
         expect(res).not.toContain(d1);
     });
     it("updates locations when item location changes", () => {
-        let hash = new SpatialHash(0.4);
-        let d1Loc = new Vector3(0.5, 0, 0);
-        let d1 = new Drone(d1Loc);
+        const hash = new SpatialHash(0.4);
+        const d1Loc = new Vector3(0.5, 0, 0);
+        const d1 = new Drone(d1Loc);
         hash.addOne(d1);
         hash.rebuild();
         let res = hash.neighbouringCoord(new Vector3(0, 0, 0), 1);
@@ -77,25 +80,25 @@ describe("Basic correctness", () => {
 
 describe("Edge cases", () => {
     it("nothing returned when the hash is empty", () => {
-        let hash = new SpatialHash(0.4);
-        let res = hash.neighbouringCoord(new Vector3(5, 0, 0), 1);
+        const hash = new SpatialHash(0.4);
+        const res = hash.neighbouringCoord(new Vector3(5, 0, 0), 1);
         expect(res).toEqual([]);
     });
     it("includes drones on the boundary", () => {
-        let hash = new SpatialHash(1);
-        let d1 = new Drone(new Vector3(5, 0, 0));
-        let d2 = new Drone(new Vector3(-5, 0, 0));
-        let d3 = new Drone(new Vector3(0, 0, 5));
-        let d4 = new Drone(new Vector3(0, 0, -5));
-        let d5 = new Drone(new Vector3(0, 5, 0));
-        let d6 = new Drone(new Vector3(0, -5, 0));
+        const hash = new SpatialHash(1);
+        const d1 = new Drone(new Vector3(5, 0, 0));
+        const d2 = new Drone(new Vector3(-5, 0, 0));
+        const d3 = new Drone(new Vector3(0, 0, 5));
+        const d4 = new Drone(new Vector3(0, 0, -5));
+        const d5 = new Drone(new Vector3(0, 5, 0));
+        const d6 = new Drone(new Vector3(0, -5, 0));
 
         [d1, d2, d3, d4, d5, d6].forEach(drone => {
             hash.addOne(drone)
         })
         hash.rebuild()
 
-        let res = hash.neighbouringCoord(new Vector3(0, 0, 0), 5);
+        const res = hash.neighbouringCoord(new Vector3(0, 0, 0), 5);
         expect(res).toContain(d1);
         expect(res).toContain(d2);
         expect(res).toContain(d3);
@@ -105,15 +108,15 @@ describe("Edge cases", () => {
         expect(res).toHaveLength(6);
     });
     it("returns two drones at the same position", () => {
-        let hash = new SpatialHash(1);
-        let d1 = new Drone(new Vector3(0.5, 0, 0));
-        let d2 = new Drone(new Vector3(0.5, 0, 0));
+        const hash = new SpatialHash(1);
+        const d1 = new Drone(new Vector3(0.5, 0, 0));
+        const d2 = new Drone(new Vector3(0.5, 0, 0));
         [d1, d2].forEach(drone => {
             hash.addOne(drone)
         })
         hash.rebuild()
 
-        let res = hash.neighbouringCoord(new Vector3(0, 0, 0), 2);
+        const res = hash.neighbouringCoord(new Vector3(0, 0, 0), 2);
         expect(res).toContain(d1)
         expect(res).toContain(d2)
         expect(res).toHaveLength(2);
@@ -122,7 +125,7 @@ describe("Edge cases", () => {
 
 describe("Benchmarks", () => {
     it("rebuilds and performs over 200 operations on 500 drones in < 2ms", () => {
-        let drones = []
+        const drones = []
         for (let i = 0; i < 500; i++) {
             drones.push(new Drone(new Vector3(
                 (i * 17) % 100,
@@ -131,11 +134,11 @@ describe("Benchmarks", () => {
             )))
         }
 
-        let hash = new SpatialHash(4);
+        const hash = new SpatialHash(4);
         hash.addMany(drones);
 
         let totalNeighbours = 0;
-        let startedAt = Date.now();
+        const startedAt = Date.now();
 
         hash.rebuild();
         for (let i = 0; i < 200; i++) {
@@ -145,7 +148,7 @@ describe("Benchmarks", () => {
             ).length;
         }
 
-        let elapsedMs = Date.now() - startedAt;
+        const elapsedMs = Date.now() - startedAt;
 
         expect(totalNeighbours).toBeGreaterThan(0);
         expect(elapsedMs).toBeLessThan(1000);

@@ -1,7 +1,10 @@
-import {Vector3} from "three";
+import {Box3, Vector3} from "three";
 
+type SpatialEntity =
+  | { location: Vector3; box?: never }   // point entity
+  | { box: Box3; location?: never };     // box entity
 
-export class SpatialHash<Type extends {location: Vector3}> {
+export class SpatialHash<Type extends SpatialEntity> {
     /**
      * Basically splits the world into a grid, then all drones in the world are put into their own little cell.
      * Ideally, these cells should be the communication radius range for the drone, so then you only need to check
@@ -38,6 +41,16 @@ export class SpatialHash<Type extends {location: Vector3}> {
         return Number.isInteger(vec.x) && Number.isInteger(vec.y) && Number.isInteger(vec.z)
     }
 
+    private getChunkCentre(coords: string): Vector3 {
+        return SpatialHash.ChunkCoordToVector3(coords)
+          .multiplyScalar(this.chunkSize)
+          .add(
+            new Vector3(1, 1, 1)
+              .normalize()
+              .multiplyScalar(this.chunkSize / 2)
+          )
+    }
+
     private getSpecificChunk(chunkCoords: string): Map<string, Array<Type>> {
         if (!SpatialHash.isValidChunkCoord(chunkCoords)) {
             throw new TypeError("Chunk coord invalid!")
@@ -59,15 +72,39 @@ export class SpatialHash<Type extends {location: Vector3}> {
         return SpatialHash.Vector3ToChunkCoord(coords.clone().divideScalar(this.chunkSize).floor())
     }
 
-    private insertItem(item: Type, coord: Vector3) {
-        const chunk = this.getChunkContaining(coord)
-        const stringCoord = SpatialHash.Vector3ToChunkCoord(coord);
+    private addToChunk(chunk: Map<string, Type[]>, stringCoord: string, item: Type): Map<string, Type[]> {
         let locationArray = chunk.get(stringCoord);
         if (!locationArray) {
             locationArray = new Array<Type>();
         }
         locationArray.push(item);
-        chunk.set(stringCoord, locationArray)
+        return chunk.set(stringCoord, locationArray);
+    }
+
+
+    private insertItem(item: Type) {
+        if ("location" in item) {
+            const chunk = this.getChunkContaining(item.location);
+            const stringCoord = SpatialHash.Vector3ToChunkCoord(item.location);
+            this.addToChunk(chunk, stringCoord, item);
+        } else if ("box" in item) {
+            const box = item.box;
+            const min = box.min.clone().divideScalar(this.chunkSize).floor();
+            const max = box.max.clone().divideScalar(this.chunkSize).floor();
+
+            for (let x = min.x; x <= max.x; x++) {
+                for (let y = min.y; y <= max.y; y++) {
+                    for (let z = min.z; z <= max.z; z++) {
+                        const coord = new Vector3(x, y, z);
+                        const chunk = this.getSpecificChunk(SpatialHash.Vector3ToChunkCoord(coord));
+                        const stringCoord = SpatialHash.Vector3ToChunkCoord(coord);
+                        this.addToChunk(chunk, stringCoord, item);
+                    }
+                }
+            }
+        } else {
+            throw new Error("Item must have either 'location' or 'box'");
+        }
     }
 
     public wipeAll() {
@@ -86,9 +123,7 @@ export class SpatialHash<Type extends {location: Vector3}> {
     public rebuild(): void {
         // Rebuilds the whole hash
         this.chunks.clear();
-        this.items.forEach(item => {
-            this.insertItem(item, item.location);
-        })
+        this.items.forEach(item => this.insertItem(item));
     }
 
     private getNeighboursInChunk(chunk: Map<string, Array<Type>>, coord: Vector3, radius: number): Array<Type> {
@@ -110,14 +145,29 @@ export class SpatialHash<Type extends {location: Vector3}> {
         const minZ = Math.floor((coord.z - radius) / this.chunkSize);
         const maxZ = Math.floor((coord.z + radius) / this.chunkSize);
         const neighbours = new Array<Type>();
+        const added = new Set<Type>();
         // check all neighbouring chunks (including diagonal and local chunk)
         for (let cx = minX; cx <= maxX; cx++) {
             for (let cy = minY; cy <= maxY; cy++) {
                 for (let cz = minZ; cz <= maxZ; cz++) {
-                    const chunkCoords = SpatialHash.Vector3ToChunkCoord(new Vector3(cx, cy, cz));
-                    const chunk = this.chunks.get(chunkCoords);
-                    if (chunk) {
-                        neighbours.push(...this.getNeighboursInChunk(chunk, coord, radius))
+                    const chunkCoord = SpatialHash.Vector3ToChunkCoord(new Vector3(cx, cy, cz));
+                    const chunk = this.chunks.get(chunkCoord);
+                    if (!chunk) continue;
+                    const chunkCenter = this.getChunkCentre(chunkCoord);
+                    // check if the furthest point of the chunk is in
+                    // the radius
+                    if (chunkCenter.distanceTo(coord) > radius + this.chunkSize * Math.SQRT2) continue;
+                    console.log(chunk);
+                    for (const [itemStringCoord, items] of chunk) {
+                        const itemCoord = SpatialHash.ChunkCoordToVector3(itemStringCoord)
+                        const dist = coord.distanceTo(itemCoord);
+                        // actually checks distance here
+                        if (dist > radius) continue;
+                        for (const item of items) {
+                            if (added.has(item)) continue;
+                            neighbours.push(item);
+                            added.add(item);
+                        }
                     }
                 }
             }
@@ -126,8 +176,32 @@ export class SpatialHash<Type extends {location: Vector3}> {
     }
 
     public neighbouringItem(item: Type, radius: number = this.chunkSize): Array<Type> {
-        const res = this.neighbouringCoord(item.location, radius);
-        return res.filter(el => el != item);
+        if ("location" in item) {
+            const res = this.neighbouringCoord(item.location, radius);
+            return res.filter(el => el != item);
+        } else {
+            throw new Error("Could not find single location of object");
+        }
     }
 
+    private distanceFromPointToItem(p: Vector3, item: Type): number {
+        if ('location' in item) {
+            return p.distanceTo(item.location);
+        } else {
+            return item.box.distanceToPoint(p);
+        }
+    }
+
+    public hasContainingBox(p: Vector3): boolean {
+        const chunk = this.getChunkContaining(p);
+        for (const [, items] of chunk) {
+            for (const item of items) {
+                if (!item.box) continue;
+                if (item.box.containsPoint(p)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
