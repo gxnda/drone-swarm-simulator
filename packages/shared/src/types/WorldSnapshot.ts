@@ -9,6 +9,6 @@ export class WorldSnapshot extends ISnapshot {
     constructor(droneSnapshots: DroneSnapshot[], obstacles: SerialisedObstacle[]) {
         super()
         this.droneSnapshots = droneSnapshots;
-        this.obstacles = [];
+        this.obstacles = obstacles;
     }
 }

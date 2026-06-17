@@ -7,7 +7,7 @@ import {
 } from "@drone-swarm/shared";
 import {Drone} from "../drone/Drone";
 import {WorldConfig} from "./WorldConfig";
-import {Obstacle, serialise} from "./Obstacle";
+import {Obstacle} from "./Obstacle";
 
 export class World {
   public size: Vector3;
@@ -79,7 +79,7 @@ export class World {
       max: [number, number, number];
     }[] = [];
     this.obstacleHash.items.forEach(obstacle => {
-      serialisedObstacles.push(serialise(obstacle))
+      serialisedObstacles.push(obstacle.serialise())
     })
     return new WorldSnapshot(droneSnapshots, serialisedObstacles)
   }
