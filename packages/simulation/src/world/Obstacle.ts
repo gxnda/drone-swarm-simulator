@@ -1,7 +1,5 @@
 import {Box3, Vector3} from "three";
-
-export type SerialisedObstacle =
-  | { type: "box"; min: [number,number,number]; max: [number,number,number] };
+import {SerialisedObstacle} from "@drone-swarm/shared";
 
 export type Obstacle = { box: Box3 };
 
