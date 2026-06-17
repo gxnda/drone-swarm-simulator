@@ -1,5 +1,6 @@
 // Maths stuff
 export { SpatialHash } from "./math/SpatialHash";
+export { SeededRng } from "./math/SeededRng";
 
 // Types
 export type { DroneId } from "./types/DroneId";
