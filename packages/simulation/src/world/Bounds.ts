@@ -19,6 +19,7 @@ export class Bounds {
   public contains(p: Vector3) {
     return this.box.containsPoint(p)
   }
+
   public clamp(p: Vector3, saveTo: Vector3 = new Vector3()): Vector3 {
     return this.box.clampPoint(p, saveTo)
   }
