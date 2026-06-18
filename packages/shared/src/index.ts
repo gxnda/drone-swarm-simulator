@@ -1,9 +1,11 @@
 // Maths stuff
+
 export { SpatialHash } from "./math/SpatialHash";
 export { SeededRng } from "./math/SeededRng";
 
 // Types
-export type { DroneId } from "./types/DroneId";
+export type { DroneId, DroneIdPair } from "./types/DroneId";
+export {idsToPair, pairToIds} from "./types/DroneId";
 export type { AlgorithmId } from "./types/AlgorithmId";
 export {Message} from "./types/Message";
 export {WorldSnapshot} from "./types/WorldSnapshot";
