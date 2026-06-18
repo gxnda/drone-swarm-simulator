@@ -10,7 +10,7 @@ export interface SimulationConfig {
   readonly algorithmId: AlgorithmId;
   // readonly algorithmConfig: AlgorithmConfig;
   // readonly obstacles: ObstacleConfig[];
-  readonly seed: number;
+  readonly seed: number | string;
   readonly boundsMin: Vector3;
   readonly boundsMax: Vector3;
   // readonly physics: PhysicsConfig;
