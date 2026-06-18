@@ -17,7 +17,7 @@ export class LogDistanceModel implements IAttenuationModel {
   constructor(readonly config: LogDistanceConfig,) {
   }
 
-  public getProbability(a: Drone, b: Drone, rng: SeededRng): {dropProbability: number} | null {
+  public getDropProbability(a: Drone, b: Drone, rng: SeededRng): {dropProbability: number} | null {
     const distance = a.location.distanceTo(b.location);
     if (distance > this.config.maxRange) return null;
     // https://en.wikipedia.org/wiki/Log-distance_path_loss_model
