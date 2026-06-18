@@ -5,7 +5,7 @@ export class ISnapshot {
     }
 
     public static fromJSON(json: string): ISnapshot {
-        let res: object = JSON.parse(json);
+        const res: object = JSON.parse(json);
         if (res instanceof ISnapshot) {
             return res
         } else {
