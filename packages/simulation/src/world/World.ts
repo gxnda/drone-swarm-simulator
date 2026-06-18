@@ -1,12 +1,11 @@
 import {Vector3} from "three";
 import {
   DroneId,
-  DroneSnapshot,
+  DroneSnapshot, SimulationConfig,
   SpatialHash,
   WorldSnapshot
 } from "@drone-swarm/shared";
 import {Drone} from "../drone/Drone";
-import {WorldConfig} from "./WorldConfig";
 import {Obstacle} from "./Obstacle";
 import {Bounds} from "./Bounds";
 
@@ -18,22 +17,31 @@ export class WorldView {
   public size: Vector3;
   public bounds: Bounds;
   public obstacleHash: SpatialHash<Obstacle>;
+  public tick: number;
+  public elapsedSec: number;
 
-  constructor(config: WorldConfig) {
-    this.size= config.worldSize
+  constructor(config: SimulationConfig) {
+    this.size = config.worldSize
     this.bounds = new Bounds(config.boundsMin, config.boundsMax);
     this.obstacleHash = new SpatialHash<Obstacle>(config.chunkSize);
+    this.tick = 0;
+    this.elapsedSec = 0;
   }
 
   public isDroneCollidingWithObstacle(drone: Drone): boolean {
     return this.obstacleHash.hasContainingBox(drone.location);
+  }
+
+  public incrementTick(): number {
+    this.tick += 1;
+    return this.tick;
   }
 }
 
 export class World extends WorldView {
   public droneHash: SpatialHash<Drone>;
 
-  constructor(config: WorldConfig) {
+  constructor(config: SimulationConfig) {
     super(config)
     this.droneHash = new SpatialHash<Drone>(config.chunkSize);
   }
@@ -74,6 +82,10 @@ export class World extends WorldView {
     return this.droneHash.items.filter(drone => drone.id === id)[0];
   }
 
+  public getDrones(): Drone[] {
+    return this.droneHash.items;
+  }
+
   public isDroneCollidingWithObstacle(drone: Drone): boolean;
   public isDroneCollidingWithObstacle(id: DroneId): boolean;
   public isDroneCollidingWithObstacle(arg: DroneId | Drone): boolean {
@@ -96,6 +108,6 @@ export class World extends WorldView {
     this.obstacleHash.items.forEach(obstacle => {
       serialisedObstacles.push(obstacle.serialise())
     })
-    return new WorldSnapshot(droneSnapshots, serialisedObstacles)
+    return new WorldSnapshot(droneSnapshots, serialisedObstacles, this.tick)
   }
 }
