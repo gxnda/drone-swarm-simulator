@@ -3,15 +3,11 @@ import {DroneId} from "./DroneId";
 export class Message {
     public text: string;
     public sender?: DroneId;
-    public recipient?: DroneId;
+    public recipient: DroneId;
 
-    constructor(text: string, sender=null, recipient=null) {
+    constructor(text: string, sender: DroneId | null, recipient: DroneId) {
         this.text = text;
-        if (sender) {
-           this.sender = sender;
-        }
-        if (recipient) {
-            this.recipient = recipient
-        }
+        if (sender) this.sender = sender;
+        this.recipient = recipient;
     }
 }
