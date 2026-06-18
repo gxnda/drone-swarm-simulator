@@ -11,4 +11,7 @@ export {Message} from "./types/Message";
 export {WorldSnapshot} from "./types/WorldSnapshot";
 export {DroneSnapshot} from "./types/DroneSnapshot";
 export type {SerialisedObstacle} from "./types/SerialisedObstacle";
+export type {SimulationConfig} from "./types/SimulationConfig";
+
+// Other
 export {Constants} from "./constants";
