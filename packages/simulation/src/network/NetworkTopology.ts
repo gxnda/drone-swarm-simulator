@@ -1,10 +1,77 @@
-import {DroneId} from "@drone-swarm/shared";
+import {DroneId, DroneIdPair, idsToPair, SeededRng} from "@drone-swarm/shared";
+import {Drone} from "../drone/Drone";
+import {IAttenuationModel} from "./models/attenuation/IAttenuationModel";
+import {ILatencyModel} from "./models/latency/ILatencyModel";
+import {LinkQuality} from "./ILinkModel";
 
 export class NetworkTopology {
   private readonly adjacency: Map<DroneId, Set<DroneId>> = new Map();
+  private readonly qualities: Map<DroneIdPair, LinkQuality> = new Map();
+
+  constructor(
+    adjacency: Map<DroneId, Set<DroneId>>,
+    qualities: Map<DroneIdPair, LinkQuality>
+  ) {
+    this.adjacency = adjacency;
+    this.qualities = qualities;
+  }
+
+  static build(
+    drones: Set<Drone>,
+    attenuationModel: IAttenuationModel,
+    latencyModel: ILatencyModel,
+    rng: SeededRng,
+  ): NetworkTopology {
+    const adjacency: Map<DroneId, Set<DroneId>> = new Map();
+    const qualities: Map<DroneIdPair, LinkQuality> = new Map();
+
+    drones.forEach(from => {
+      adjacency.set(from.id, new Set());
+      drones.forEach(to => {
+        const dropProbability = attenuationModel.getDropProbability(from, to, rng);
+        if (dropProbability) {
+          adjacency.get(from.id)!.add(to.id);
+          qualities.set(idsToPair(from.id, to.id), {latencyTicks: 1, dropProbability: dropProbability.dropProbability});
+        }
+      })
+    });
+    const topology: NetworkTopology = new NetworkTopology(adjacency, qualities);
+
+    drones.forEach(from => {
+      drones.forEach(to => {
+        const quality = qualities.get(idsToPair(from.id, to.id))!;
+        quality.latencyTicks = latencyModel.getLatency(from, to, topology, rng);
+        topology.setQuality(from.id, to.id, quality);
+      })
+    });
+    return topology;
+  }
 
   public getNeighbours(id: DroneId): Set<DroneId> {
     return this.adjacency.get(id) ?? new Set();
+  }
+
+  public getQuality(from: DroneId, to: DroneId): LinkQuality | undefined {
+    return this.qualities.get(idsToPair(from, to));
+  }
+
+  public setQuality(from: DroneId, to: DroneId, quality: LinkQuality): void {
+    this.qualities.set(idsToPair(from, to), quality);
+  }
+
+  public averageQuality(): LinkQuality {
+    let averageLatency = 0;
+    let averageDropProbability = 0;
+    const count = this.qualities.size;
+    this.qualities.values().forEach((quality) => {
+      averageLatency += quality.latencyTicks;
+      averageDropProbability += quality.dropProbability;
+    });
+    return {
+      latencyTicks: averageLatency / count,
+      dropProbability: averageDropProbability / count,
+    }
+
   }
 
   public getAll(): Set<DroneId> {
