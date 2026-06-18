@@ -8,16 +8,34 @@ import {
 import {Drone} from "../drone/Drone";
 import {WorldConfig} from "./WorldConfig";
 import {Obstacle} from "./Obstacle";
+import {Bounds} from "./Bounds";
 
-export class World {
+/**
+ * The world but without any of the drones, gets sent to algorithms to stop
+ * any cheating
+ */
+export class WorldView {
   public size: Vector3;
-  public droneHash: SpatialHash<Drone>;
+  public bounds: Bounds;
   public obstacleHash: SpatialHash<Obstacle>;
 
   constructor(config: WorldConfig) {
-    this.size = config.worldSize
-    this.droneHash = new SpatialHash<Drone>(config.chunkSize);
+    this.size= config.worldSize
+    this.bounds = new Bounds(config.boundsMin, config.boundsMax);
     this.obstacleHash = new SpatialHash<Obstacle>(config.chunkSize);
+  }
+
+  public isDroneCollidingWithObstacle(drone: Drone): boolean {
+    return this.obstacleHash.hasContainingBox(drone.location);
+  }
+}
+
+export class World extends WorldView {
+  public droneHash: SpatialHash<Drone>;
+
+  constructor(config: WorldConfig) {
+    super(config)
+    this.droneHash = new SpatialHash<Drone>(config.chunkSize);
   }
 
   public add(drone: Drone): void;
@@ -56,16 +74,13 @@ export class World {
     return this.droneHash.items.filter(drone => drone.id === id)[0];
   }
 
-  public isDroneColliding(drone: Drone): boolean;
-  public isDroneColliding(id: DroneId): boolean;
-  public isDroneColliding(arg: DroneId | Drone): boolean {
-    if (typeof arg === 'string') {
-      const location = this.getDrone(arg)!.location;
-      return this.obstacleHash.hasContainingBox(location);
-    } else {
-      const location = arg.location;
-      return this.obstacleHash.hasContainingBox(location);
-    }
+  public isDroneCollidingWithObstacle(drone: Drone): boolean;
+  public isDroneCollidingWithObstacle(id: DroneId): boolean;
+  public isDroneCollidingWithObstacle(arg: DroneId | Drone): boolean {
+    let drone: Drone;
+    if (typeof arg === 'string') drone = this.getDrone(arg)!;
+    else drone = arg;
+    return super.isDroneCollidingWithObstacle(drone!);
   }
 
   public snapshot(): WorldSnapshot {
