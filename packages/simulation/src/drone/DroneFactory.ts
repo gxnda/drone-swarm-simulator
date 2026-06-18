@@ -1,12 +1,5 @@
 import {Vector3} from "three";
-import {Bounds} from "../world/Bounds";
-import {SeededRng} from "@drone-swarm/shared";
-
-export type SpawnStrategy =
-  | { type: "random"; count: number; bounds: Bounds }
-  | { type: "grid"; count: Vector3; spacing: number }
-  | { type: "cluster"; count: number; centre: Vector3; radius: number }
-  | { type: "sphereSurface"; count: number; radius: number }
+import {SeededRng, SpawnStrategy} from "@drone-swarm/shared";
 
 export class DroneFactory {
   static spawn(strategy: SpawnStrategy, rng: SeededRng): Vector3[] {
@@ -14,9 +7,9 @@ export class DroneFactory {
       case "random": {
         const drones: Vector3[] = [];
         for (let i = 0; i < strategy.count; i++) {
-          const x = rng.float(strategy.bounds.min.x, strategy.bounds.max.x);
-          const y = rng.float(strategy.bounds.min.y, strategy.bounds.max.y);
-          const z = rng.float(strategy.bounds.min.z, strategy.bounds.max.z);
+          const x = rng.float(strategy.boundMin.x, strategy.boundMax.x);
+          const y = rng.float(strategy.boundMin.y, strategy.boundMax.y);
+          const z = rng.float(strategy.boundMin.z, strategy.boundMax.z);
           drones.push(new Vector3(x, y, z));
         }
         return drones;
