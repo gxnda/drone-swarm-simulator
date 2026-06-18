@@ -74,4 +74,20 @@ export class Drone {
       this.state
     )
   }
+
+  public setInbox(inbox: Message[]): void {
+    this.inbox = inbox;
+  }
+
+  public getInbox(): Message[] {
+    return this.inbox;
+  }
+
+  public addToInbox(message: Message): number {
+    return this.inbox.push(message);
+  }
+
+  public receive(message: Message): void {
+    this.addToInbox(message);
+  }
 }
