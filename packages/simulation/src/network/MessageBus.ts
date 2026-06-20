@@ -27,7 +27,7 @@ export class MessageBus {
     }
   }
 
-  public getMessagesToBeDelivered(currentTick: number): Map<DroneId, Message[]> {
+  public popMessagesToBeDelivered(currentTick: number): Map<DroneId, Message[]> {
     const messages = this.queue.get(currentTick) ?? [];
     this.queue.delete(currentTick);
     const recipients: Map<DroneId, Message[]> = new Map();
@@ -41,8 +41,13 @@ export class MessageBus {
     return recipients;
   }
 
+  /**
+   * Delivers all messages to the drones that are recipients of messages in the queue for the current tick
+   * @param idToDrones
+   * @param currentTick
+   */
   public deliver(idToDrones: Map<DroneId, Drone>, currentTick: number): void {
-    const messagesToDeliver = this.getMessagesToBeDelivered(currentTick);
+    const messagesToDeliver = this.popMessagesToBeDelivered(currentTick);
     messagesToDeliver.forEach((messages, recipientId) => {
       const drone = idToDrones.get(recipientId);
       if (drone) {
