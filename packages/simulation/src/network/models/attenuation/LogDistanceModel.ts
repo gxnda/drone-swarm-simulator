@@ -1,20 +1,11 @@
 import {Drone} from "../../../drone/Drone";
-import {SeededRng} from "@drone-swarm/shared";
+import {LogDistanceConfig, SeededRng} from "@drone-swarm/shared";
 import {IAttenuationModel} from "./IAttenuationModel";
 
-export interface LogDistanceConfig {
-  referenceDistance: number
-  referencePathLoss: number
-  pathLossExponent: number
-  shadowFadingStdDev: number
-  receiverSensitivity: number
-  maxRange: number
-  dropSteepness: number
-}
 
 export class LogDistanceModel implements IAttenuationModel {
   // Not a fan of decibels, ts baffling
-  constructor(readonly config: LogDistanceConfig,) {
+  constructor(readonly config: LogDistanceConfig) {
   }
 
   public getDropProbability(a: Drone, b: Drone, rng: SeededRng): {dropProbability: number} | null {

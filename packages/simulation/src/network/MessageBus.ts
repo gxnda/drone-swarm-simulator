@@ -1,5 +1,4 @@
-import {DroneId, Message, SeededRng} from "@drone-swarm/shared";
-import {LinkQuality} from "./ILinkModel";
+import {DroneId, LinkQuality, Message, SeededRng} from "@drone-swarm/shared";
 import {Drone} from "../drone/Drone";
 
 /**

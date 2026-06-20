@@ -1,12 +1,8 @@
 import {ILatencyModel} from "./ILatencyModel";
 import {Drone} from "../../../drone/Drone";
 import {NetworkTopology} from "../../NetworkTopology";
-import {SeededRng} from "@drone-swarm/shared";
+import {ContentionLatencyConfig, SeededRng} from "@drone-swarm/shared";
 
-export interface ContentionLatencyConfig {
-  baseLatencyTicks: number;
-  addedTicksPerNeighbor: number;
-}
 
 /**
  * Increases latency based on the number of neighbours the sender has,

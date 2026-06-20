@@ -1,8 +1,17 @@
-import {DroneId, DroneIdPair, idsToPair, SeededRng} from "@drone-swarm/shared";
+import {
+  DroneId,
+  DroneIdPair,
+  idsToPair,
+  LinkQuality, NetworkConfig,
+  SeededRng
+} from "@drone-swarm/shared";
 import {Drone} from "../drone/Drone";
 import {IAttenuationModel} from "./models/attenuation/IAttenuationModel";
 import {ILatencyModel} from "./models/latency/ILatencyModel";
-import {LinkQuality} from "./ILinkModel";
+import {
+  AttenuationModelFactory,
+  LatencyModelFactory
+} from "./models/ModelFactory";
 
 export class NetworkTopology {
   private readonly adjacency: Map<DroneId, Set<DroneId>> = new Map();
@@ -16,7 +25,17 @@ export class NetworkTopology {
     this.qualities = qualities;
   }
 
-  static build(
+  static buildFromConfig(
+    drones: Set<Drone>,
+    rng: SeededRng,
+    networkConfig: NetworkConfig
+  ): NetworkTopology {
+    const attenuation: IAttenuationModel = AttenuationModelFactory.fromConfig(networkConfig.attenuationConfig);
+    const latency: ILatencyModel = LatencyModelFactory.fromConfig(networkConfig.latencyConfig);
+    return NetworkTopology.buildFromModels(drones, attenuation, latency, rng)
+  }
+
+  static buildFromModels(
     drones: Set<Drone>,
     attenuationModel: IAttenuationModel,
     latencyModel: ILatencyModel,

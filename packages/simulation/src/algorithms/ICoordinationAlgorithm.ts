@@ -1,4 +1,5 @@
 import {
+  AlgorithmConfig,
   AlgorithmId,
   DroneId,
   Message,
@@ -13,7 +14,7 @@ export interface ICoordinationAlgorithm {
   readonly name: string;
   readonly description: string;
 
-  initialise(drones: ReadonlyArray<Drone>, config: SimulationConfig): void
+  initialise(drones: ReadonlyArray<Drone>, config: AlgorithmConfig): void
 
   computeDesiredVelocity(
     drone: Readonly<Drone>,
