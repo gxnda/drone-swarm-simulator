@@ -33,22 +33,27 @@ export class BoidAlgorithm implements ICoordinationAlgorithm {
     return cohesion.add(separation).add(alignment);
   }
 
-  public makeStateMessage(drone: Readonly<Drone>): BoidStateMessage {
-    return {
-      payload: {
-        location: drone.location,
-        velocity: drone.velocity
-      } as BoidStatePayload,
-      sender: drone.id
-    } as BoidStateMessage;
+  public makeStateMessages(drone: Readonly<Drone>, neighbours: ReadonlyArray<Readonly<Drone>>): BoidStateMessage[] {
+    const stateMessages: BoidStateMessage[] = [];
+    neighbours.forEach(neighbour => {
+      stateMessages.push({
+        payload: {
+          location: drone.location,
+          velocity: drone.velocity,
+        } as BoidStatePayload,
+        sender: drone.id,
+        recipient: neighbour.id,
+      })
+    });
+    return stateMessages;
   }
 
   /**
    * Just sends an announcement saying where it is and what its velocity is
    * Boids doesn't really need any complex announcements
    */
-  computeOutgoingMessages(drone: Readonly<Drone>, _neighbours: ReadonlyArray<Readonly<Drone>>, _world: Readonly<WorldView>): ReadonlyArray<Message> {
-    return [this.makeStateMessage(drone)]
+  computeOutgoingMessages(drone: Readonly<Drone>, neighbours: ReadonlyArray<Readonly<Drone>>, _world: Readonly<WorldView>): ReadonlyArray<Message> {
+    return this.makeStateMessages(drone, neighbours);
   }
 
   initialise(_drones: ReadonlyArray<Drone>, _config: BoidsConfig): void {
