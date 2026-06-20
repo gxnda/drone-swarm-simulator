@@ -14,56 +14,55 @@ import {
 } from "./models/ModelFactory";
 
 export class NetworkTopology {
-  private readonly adjacency: Map<DroneId, Set<DroneId>> = new Map();
-  private readonly qualities: Map<DroneIdPair, LinkQuality> = new Map();
+  private adjacency: Map<DroneId, Set<DroneId>> = new Map();
+  private qualities: Map<DroneIdPair, LinkQuality> = new Map();
 
   constructor(
-    adjacency: Map<DroneId, Set<DroneId>>,
-    qualities: Map<DroneIdPair, LinkQuality>
+    drones: Set<Drone>,
+    private readonly attenuationModel: IAttenuationModel,
+    private readonly latencyModel: ILatencyModel,
+    private readonly rng: SeededRng,
   ) {
-    this.adjacency = adjacency;
-    this.qualities = qualities;
+    this.refresh(drones);
   }
 
-  static buildFromConfig(
+  static fromConfig(
     drones: Set<Drone>,
     rng: SeededRng,
     networkConfig: NetworkConfig
   ): NetworkTopology {
     const attenuation: IAttenuationModel = AttenuationModelFactory.fromConfig(networkConfig.attenuationConfig);
     const latency: ILatencyModel = LatencyModelFactory.fromConfig(networkConfig.latencyConfig);
-    return NetworkTopology.buildFromModels(drones, attenuation, latency, rng)
+    return new NetworkTopology(drones, attenuation, latency, rng)
   }
 
-  static buildFromModels(
-    drones: Set<Drone>,
-    attenuationModel: IAttenuationModel,
-    latencyModel: ILatencyModel,
-    rng: SeededRng,
-  ): NetworkTopology {
+  public refresh(drones: Set<Drone>): void {
     const adjacency: Map<DroneId, Set<DroneId>> = new Map();
     const qualities: Map<DroneIdPair, LinkQuality> = new Map();
-
     drones.forEach(from => {
       adjacency.set(from.id, new Set());
       drones.forEach(to => {
-        const dropProbability = attenuationModel.getDropProbability(from, to, rng);
+        const dropProbability = this.attenuationModel.getDropProbability(from, to, this.rng);
         if (dropProbability) {
           adjacency.get(from.id)!.add(to.id);
-          qualities.set(idsToPair(from.id, to.id), {latencyTicks: 1, dropProbability: dropProbability.dropProbability});
+          qualities.set(idsToPair(from.id, to.id), {
+            latencyTicks: -1, // TEMP
+            dropProbability: dropProbability.dropProbability
+          })
         }
       })
     });
-    const topology: NetworkTopology = new NetworkTopology(adjacency, qualities);
+    this.adjacency = adjacency;
 
+    // finish up and make the latency stuff
+    this.qualities = new Map();
     drones.forEach(from => {
       drones.forEach(to => {
         const quality = qualities.get(idsToPair(from.id, to.id))!;
-        quality.latencyTicks = latencyModel.getLatency(from, to, topology, rng);
-        topology.setQuality(from.id, to.id, quality);
+        quality.latencyTicks = this.latencyModel.getLatency(from, to, this, this.rng);
+        this.setQuality(from.id, to.id, quality);
       })
     });
-    return topology;
   }
 
   public getNeighbours(id: DroneId): Set<DroneId> {
@@ -90,7 +89,6 @@ export class NetworkTopology {
       latencyTicks: averageLatency / count,
       dropProbability: averageDropProbability / count,
     }
-
   }
 
   public getAll(): Set<DroneId> {
