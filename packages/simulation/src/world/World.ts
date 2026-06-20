@@ -39,7 +39,11 @@ export class WorldView {
 }
 
 export class World extends WorldView {
-  public droneHash: SpatialHash<Drone>;
+  public readonly droneHash: SpatialHash<Drone>;
+
+  // TODO: Is there a better place to put this? This only serves to map
+  //  messageBus messages in Engine
+  public readonly droneIdMap: Map<DroneId, Drone> = new Map();
 
   constructor(config: SimulationConfig) {
     super(config)
@@ -53,8 +57,10 @@ export class World extends WorldView {
   public add(arg: Drone | Drone[] | Obstacle | Obstacle[]): void {
     if (arg instanceof Drone) {
       this.droneHash.addOne(arg);
+      this.droneIdMap.set(arg.id, arg);
     } else if (Array.isArray(arg) && arg.every(item => item instanceof Drone)) {
       this.droneHash.addMany(arg);
+      arg.forEach(drone => this.droneIdMap.set(drone.id, drone));
     } else if ("box" in arg) {
       this.obstacleHash.addOne(arg);
     } else if (Array.isArray(arg) && arg.every(item => "box" in item)) {
