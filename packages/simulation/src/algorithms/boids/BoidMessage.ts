@@ -14,5 +14,5 @@ export interface BoidStatePayload extends IPayload {
 export interface BoidStateMessage extends Message {
   payload: BoidStatePayload;
   sender?: DroneId;
-  recipient?: DroneId;
+  recipient: DroneId;
 }

@@ -12,7 +12,6 @@ import {ContentionLatencyConfig, SeededRng} from "@drone-swarm/shared";
 export class ContentionLatencyModel implements ILatencyModel {
   constructor(readonly config: ContentionLatencyConfig) {}
   //
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public getLatency(from: Drone, to: Drone, topology: NetworkTopology, _rng: SeededRng): number {
     return this.config.baseLatencyTicks + Math.round(this.config.addedTicksPerNeighbor * topology.getDegree(from.id));
   }

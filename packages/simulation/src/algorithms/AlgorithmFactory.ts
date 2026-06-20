@@ -3,7 +3,7 @@ import {ICoordinationAlgorithm} from "./ICoordinationAlgorithm";
 
 export class AlgorithmFactory {
   static fromConfig(config: AlgorithmConfig): ICoordinationAlgorithm {
-    switch (config.algorithmId) {
+    switch (config.id) {
       case "boids":
         // TODO
         throw new Error("Not implemented.");

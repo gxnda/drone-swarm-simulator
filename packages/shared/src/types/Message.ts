@@ -7,5 +7,5 @@ export interface IPayload {
 export interface Message {
     payload: IPayload;
     sender?: DroneId;
-    recipient?: DroneId; // if none: announce
+    recipient: DroneId;
 }

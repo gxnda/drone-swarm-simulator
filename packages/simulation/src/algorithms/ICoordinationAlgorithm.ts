@@ -3,7 +3,6 @@ import {
   AlgorithmId,
   DroneId,
   Message,
-  SimulationConfig
 } from "@drone-swarm/shared";
 import {Drone} from "../drone/Drone";
 import {WorldView} from "../world/World";
