@@ -9,15 +9,21 @@ import {
 import {DroneFactory} from "./src/drone/DroneFactory";
 import {Vector3} from "three";
 import {Drone} from "./src/drone/Drone";
+import {ICoordinationAlgorithm} from "./src/algorithms/ICoordinationAlgorithm";
+import {AlgorithmFactory} from "./src/algorithms/AlgorithmFactory";
 
 export class Engine {
   readonly world: World;
+  private readonly config: SimulationConfig;
   private readonly topology: NetworkTopology;
   private rng: SeededRng;
+  private readonly algorithm: ICoordinationAlgorithm
+  // private readonly metrics: Something???
 
   private running: boolean;
 
   constructor(config: SimulationConfig) {
+    this.config = config;
     this.world = new World(config);
     this.rng = new SeededRng(config.seed)
     this.running = false;
@@ -27,6 +33,7 @@ export class Engine {
       this.rng,
       config.networkConfig
     );
+    this.algorithm = AlgorithmFactory.fromConfig(config.algorithmConfig);
   }
 
   private createDrones(strategy: SpawnStrategy, range: number): Drone[] {

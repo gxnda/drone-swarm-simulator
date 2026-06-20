@@ -1,7 +1,11 @@
 import {DroneId} from "./DroneId";
 
+export interface IPayload {
+    type: string
+}
+
 export interface Message {
-    text: string;
+    payload: IPayload;
     sender?: DroneId;
-    recipient: DroneId;
+    recipient?: DroneId; // if none: announce
 }

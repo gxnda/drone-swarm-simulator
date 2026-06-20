@@ -7,13 +7,13 @@ export {SeededRng} from "./math/SeededRng";
 export type {DroneId, DroneIdPair} from "./types/DroneId";
 export {idsToPair, pairToIds} from "./types/DroneId";
 export type {AlgorithmId} from "./types/AlgorithmId";
-export {Message} from "./types/Message";
+export type {Message, IPayload} from "./types/Message";
 export {WorldSnapshot} from "./types/WorldSnapshot";
 export {DroneSnapshot} from "./types/DroneSnapshot";
 export type {SerialisedObstacle} from "./types/SerialisedObstacle";
 export type {SimulationConfig} from "./types/SimulationConfig";
 export type {SpawnStrategy} from "./types/SpawnStrategy";
-export type {AlgorithmConfig} from "./types/AlgorithmConfig";
+export type {AlgorithmConfig, BoidsConfig} from "./types/AlgorithmConfig";
 export type {LinkQuality} from "./types/LinkQuality";
 export type {
   NetworkConfig,

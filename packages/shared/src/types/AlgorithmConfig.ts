@@ -1,13 +1,14 @@
+import {AlgorithmId} from "./AlgorithmId";
 
 interface BaseAlgorithmConfig {
-  readonly algorithmId: string;
+  readonly id: AlgorithmId;
   readonly communicationRange: number;
   readonly maxSpeed: number;
-  readonly maxForce: number; // how quickly it can change direction
+  readonly maxAccel: number; // max acceleration per tick
 }
 
 export interface BoidsConfig extends BaseAlgorithmConfig {
-  readonly algorithmId: "boids"
+  readonly id: "boids" & {__brand: "AlgorithmId"};
   readonly separationWeight: number
   readonly alignmentWeight: number
   readonly cohesionWeight: number
@@ -15,17 +16,17 @@ export interface BoidsConfig extends BaseAlgorithmConfig {
 }
 
 export interface GossipConfig extends BaseAlgorithmConfig {
-  readonly algorithmId: "gossip"
+  readonly id: "gossip" & {__brand: "AlgorithmId"};
   // TODO
 }
 
 export interface StigmergyConfig extends BaseAlgorithmConfig {
-  readonly algorithmId: "stigmergy";
+  readonly id: "stigmergy" & {__brand: "AlgorithmId"};
   // TODO
 }
 
 export interface ConsensusConfig extends BaseAlgorithmConfig {
-  readonly algorithmId: "consensus"
+  readonly id: "consensus" & {__brand: "AlgorithmId"};
   // TODO
 }
 
