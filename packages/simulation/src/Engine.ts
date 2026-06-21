@@ -44,13 +44,15 @@ export class Engine {
     const locations: Vector3[] = DroneFactory.spawn(strategy, this.rng);
     const drones: Drone[] = [];
     for (let i = 0; i < locations.length; i++) {
-      drones.push(new Drone(
+      const drone = new Drone(
           `${i}` as DroneId,
           locations[i]!,
           range,
           this.config.droneMaxSpeed,
           this.config.droneMaxAccel,
-        ))
+        );
+      drone.velocity = new Vector3(1,0,0)
+      drones.push(drone)
     }
     return drones;
   }
@@ -171,7 +173,6 @@ export class Engine {
     this.applyBoundaryBehaviour(drones);
 
     this.applyVelocity(drones);
-    this.updateDroneStates(drones);
     this.clearInboxes(drones);
 
     this.getMetrics(drones);
