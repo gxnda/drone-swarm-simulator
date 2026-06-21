@@ -92,19 +92,6 @@ export class BoidAlgorithm implements ICoordinationAlgorithm {
     ).divideScalar(neighbours.length);
   }
 
-  private doPhysicsNormalisations(curVel: Vector3, nextVel: Vector3): Vector3 {
-    if (nextVel.lengthSq() > this.config.maxSpeed ** 2) {
-      nextVel.normalize().multiplyScalar(this.config.maxSpeed);
-    }
-    // check maximum acceleration
-    const accel = nextVel.clone().sub(curVel);
-    if (accel.lengthSq() > this.config.maxAccel ** 2) {
-      accel.normalize().multiplyScalar(this.config.maxAccel);
-      nextVel = curVel.clone().add(accel);
-    }
-    return nextVel;
-  }
-
   // onDroneFailed(failedId: DroneId, survivors: ReadonlyArray<Drone>): void {
   // }
   // onPartitionHealed(components: DroneId[][]): void {
