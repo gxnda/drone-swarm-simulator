@@ -25,7 +25,7 @@ export class BoidAlgorithm implements ICoordinationAlgorithm {
     _world: Readonly<WorldView>
   ): Vector3 {
     // if no neighbours, just keep swimming :)
-    if (!neighbours) return drone.velocity.clone();
+    if (neighbours.length === 0) return drone.velocity.clone();
 
     const cohesion = this.computeCohesion(drone, neighbours).multiplyScalar(this.config.cohesionWeight);
     const separation = this.computeSeparation(drone, neighbours).multiplyScalar(this.config.separationWeight);
