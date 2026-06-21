@@ -1,8 +1,9 @@
 import {Vector3} from "three";
 import {
+  AlgorithmConfig,
   DroneId,
-  DroneSnapshot, SimulationConfig,
-  SpatialHash,
+  DroneSnapshot, NetworkConfig, SimulationConfig,
+  SpatialHash, SpawnStrategy,
   WorldSnapshot
 } from "@drone-swarm/shared";
 import {Drone} from "../drone/Drone";
@@ -18,22 +19,40 @@ export class WorldView {
   public bounds: Bounds;
   public obstacleHash: SpatialHash<Obstacle>;
   public tick: number;
+  public dt: number;
   public elapsedSec: number;
 
   constructor(config: SimulationConfig) {
     this.size = config.worldSize
-    this.bounds = new Bounds(config.boundsMin, config.boundsMax);
+    this.bounds = new Bounds(config.boundsMin, config.boundsMax, config.preferredBoundaryBehaviour);
     this.obstacleHash = new SpatialHash<Obstacle>(config.chunkSize);
     this.tick = 0;
+    this.dt = config.dt ?? 1;
     this.elapsedSec = 0;
+  }
+
+  static fromWorld(world: World): WorldView {
+    return new WorldView({
+      chunkSize: world.obstacleHash.chunkSize,
+      worldSize: world.size,
+      boundsMin: world.bounds.min,
+      boundsMax: world.bounds.max,
+
+      droneCount: 0,
+      networkConfig: {} as NetworkConfig,
+      seed: 0,
+      algorithmConfig: {} as AlgorithmConfig,
+      spawnStrategy: {} as SpawnStrategy,
+    } as SimulationConfig)
   }
 
   public isDroneCollidingWithObstacle(drone: Drone): boolean {
     return this.obstacleHash.hasContainingBox(drone.location);
   }
 
-  public incrementTick(): number {
+  public incrementTime(): number {
     this.tick += 1;
+    this.elapsedSec += this.dt;
     return this.tick;
   }
 }
@@ -69,11 +88,11 @@ export class World extends WorldView {
   }
 
   public getActiveDrones(): Drone[] {
-    return this.droneHash.items.filter(drone => drone.isActive());
+    return new Array(...this.droneHash.items).filter(drone => drone.isActive());
   }
 
   public getDroneCount(): number {
-    return this.droneHash.items.length;
+    return this.droneHash.items.size;
   }
 
   public getNeighboursOf(drone: Drone): Drone[] {
@@ -85,10 +104,13 @@ export class World extends WorldView {
   }
 
   public getDrone(id: DroneId): Drone | undefined {
-    return this.droneHash.items.filter(drone => drone.id === id)[0];
+    for (const drone of this.droneHash.items) {
+      if (drone.id === id) return drone;
+    }
+    return undefined;
   }
 
-  public getDrones(): Drone[] {
+  public getDrones(): ReadonlySet<Drone> {
     return this.droneHash.items;
   }
 
