@@ -4,20 +4,22 @@ import {
   DroneId,
   SeededRng,
   SimulationConfig,
-  SpawnStrategy
+  SpawnStrategy, WorldSnapshot
 } from "@drone-swarm/shared";
 import {DroneFactory} from "./src/drone/DroneFactory";
 import {Vector3} from "three";
 import {Drone} from "./src/drone/Drone";
 import {ICoordinationAlgorithm} from "./src/algorithms/ICoordinationAlgorithm";
 import {AlgorithmFactory} from "./src/algorithms/AlgorithmFactory";
+import {MessageBus} from "./src/network/MessageBus";
 
 export class Engine {
   readonly world: World;
   private readonly config: SimulationConfig;
-  private readonly topology: NetworkTopology;
-  private rng: SeededRng;
+  private topology: NetworkTopology;
+  private readonly rng: SeededRng;
   private readonly algorithm: ICoordinationAlgorithm
+  private messageBus: MessageBus;
   // private readonly metrics: Something???
 
   private running: boolean;
@@ -34,6 +36,7 @@ export class Engine {
       config.networkConfig
     );
     this.algorithm = AlgorithmFactory.fromConfig(config.algorithmConfig);
+    this.messageBus = new MessageBus(new Map());
   }
 
   private createDrones(strategy: SpawnStrategy, range: number): Drone[] {
@@ -61,7 +64,16 @@ export class Engine {
     this.running = false;
   }
 
-  public step(): World {
+  private sendAllDueMessages(droneIdMap: Map<DroneId, Drone>, tick: number): void {
+    this.messageBus.deliver(droneIdMap, tick)
+  }
+
+  public step(): WorldSnapshot {
+    this.sendAllDueMessages(this.world.droneIdMap, this.world.tick);
+
+    this.topology.refresh(new Set(this.world.getDrones()));
+
+
   }
 
 }
