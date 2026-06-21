@@ -36,7 +36,7 @@ export class NetworkTopology {
     return new NetworkTopology(drones, attenuation, latency, rng)
   }
 
-  public refresh(drones: Set<Drone>): void {
+  public refresh(drones: ReadonlySet<Drone>): void {
     const adjacency: Map<DroneId, Set<DroneId>> = new Map();
     const qualities: Map<DroneIdPair, LinkQuality> = new Map();
     drones.forEach(from => {
@@ -69,8 +69,8 @@ export class NetworkTopology {
     return this.adjacency.get(id) ?? new Set();
   }
 
-  public getQuality(from: DroneId, to: DroneId): LinkQuality | undefined {
-    return this.qualities.get(idsToPair(from, to));
+  public getQuality(from: DroneId, to: DroneId): LinkQuality {
+    return this.qualities.get(idsToPair(from, to)) ?? {latencyTicks: 0, dropProbability: 1};
   }
 
   public setQuality(from: DroneId, to: DroneId, quality: LinkQuality): void {
