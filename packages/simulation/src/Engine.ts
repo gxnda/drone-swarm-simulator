@@ -1,17 +1,17 @@
-import {World} from "./src/world/World";
-import {NetworkTopology} from "./src/network/NetworkTopology";
+import {World} from "./world/World";
+import {NetworkTopology} from "./network/NetworkTopology";
 import {
   DroneId,
   SeededRng,
   SimulationConfig,
   SpawnStrategy, WorldSnapshot
 } from "@drone-swarm/shared";
-import {DroneFactory} from "./src/drone/DroneFactory";
+import {DroneFactory} from "./drone/DroneFactory";
 import {Vector3} from "three";
-import {Drone} from "./src/drone/Drone";
-import {ICoordinationAlgorithm} from "./src/algorithms/ICoordinationAlgorithm";
-import {AlgorithmFactory} from "./src/algorithms/AlgorithmFactory";
-import {MessageBus} from "./src/network/MessageBus";
+import {Drone} from "./drone/Drone";
+import {ICoordinationAlgorithm} from "./algorithms/ICoordinationAlgorithm";
+import {AlgorithmFactory} from "./algorithms/AlgorithmFactory";
+import {MessageBus} from "./network/MessageBus";
 
 export class Engine {
   readonly world: World;
