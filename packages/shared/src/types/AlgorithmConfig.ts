@@ -3,8 +3,6 @@ import {AlgorithmId} from "./AlgorithmId";
 interface BaseAlgorithmConfig {
   readonly id: AlgorithmId;
   readonly communicationRange: number;
-  readonly maxSpeed: number;
-  readonly maxAccel: number; // max acceleration per tick
 }
 
 export interface BoidsConfig extends BaseAlgorithmConfig {
