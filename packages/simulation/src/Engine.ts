@@ -118,6 +118,7 @@ export class Engine {
         velocity = lastVelocity.clone().add(accel);
       }
       drone.velocity = velocity.clone();
+      drone.acceleration = accel;
     })
   }
 
