@@ -170,9 +170,11 @@ export class Engine {
 
     this.applyAndClampVelocities(drones, desiredVelocities);
     this.applyObstacleAvoidance(drones);
-    this.applyBoundaryBehaviour(drones);
 
     this.applyVelocity(drones);
+    this.applyBoundaryBehaviour(drones);
+
+    this.updateDroneOrientations(drones);
     this.clearInboxes(drones);
 
     this.getMetrics(drones);
