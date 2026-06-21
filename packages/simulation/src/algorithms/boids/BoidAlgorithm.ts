@@ -61,12 +61,13 @@ export class BoidAlgorithm implements ICoordinationAlgorithm {
   }
 
   private computeCohesion(drone: Readonly<Drone>, neighbours: ReadonlyArray<Readonly<Drone>>): Vector3 {
-    return neighbours.reduce(
+    const centroid = neighbours.reduce(
       (acc, neighbour) =>
         acc.add(neighbour.location), new Vector3(0, 0, 0))
       .divideScalar(neighbours.length)
-      .sub(drone.location)
-      .normalize();
+      .sub(drone.location);
+
+    return centroid.lengthSq() > 1e-6 ? centroid.normalize() : new Vector3(0, 0, 0);
   }
 
   private computeSeparation(drone: Readonly<Drone>, neighbours: ReadonlyArray<Readonly<Drone>>): Vector3 {
