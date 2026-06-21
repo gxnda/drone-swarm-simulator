@@ -17,7 +17,7 @@ export class MessageBus {
     rng: SeededRng
   ): void {
     // drop it randomly
-    if (rng.float(0, 1) <= linkQuality.dropProbability) return;
+    if (rng.float(0, 1) < linkQuality.dropProbability) return;
 
     const arrivesAt = currentTick + linkQuality.latencyTicks;
     if (this.queue.has(arrivesAt)) {
