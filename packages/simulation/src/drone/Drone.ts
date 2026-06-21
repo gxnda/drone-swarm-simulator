@@ -92,12 +92,6 @@ export class Drone {
     this.state = state;
   }
 
-  public step(stepLength: number) {
-    // TODO: Should it accelerate then move, or move then accelerate?
-    this.velocity.addScaledVector(this.acceleration, stepLength);
-    this.location.addScaledVector(this.velocity, stepLength);
-  }
-
   public distanceTo(other: Drone): number {
     return this.location.distanceTo(other.location);
   }
