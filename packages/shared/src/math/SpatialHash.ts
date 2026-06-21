@@ -13,14 +13,22 @@ export class SpatialHash<Type extends SpatialEntity> {
      * All items must have a "location" attribute
      */
 
-    public chunkSize: number;
+    public readonly chunkSize: number;
     private chunks: Map<string, Map<string, Array<Type>>>
-    public items: Array<Type>;
+    private readonly _items: Set<Type>;
 
     constructor(cellSize: number) {
         this.chunkSize = cellSize;
         this.chunks = new Map<string, Map<string, Array<Type>>>();
-        this.items = new Array<Type>();
+        this._items = new Set<Type>();
+    }
+
+    public get items(): ReadonlySet<Type> {
+        return this._items;
+    }
+
+    public addItem(item: Type) {
+        this._items.add(item);
     }
 
     private static ChunkCoordToVector3(coords: string): Vector3 {
@@ -118,15 +126,17 @@ export class SpatialHash<Type extends SpatialEntity> {
 
     public wipeAll() {
         this.chunks.clear();
-        this.items = [];
+        this._items.clear();
     }
 
     public addOne(item: Type): number {
-        return this.items.push(item);
+        this.addItem(item);
+        return this.items.size
     }
 
     public addMany(items: Type[]): number {
-        return this.items.push(...items);
+        items.forEach((item) => this.addItem(item));
+        return this.items.size;
     }
 
     public rebuild(): void {
