@@ -1,6 +1,7 @@
 // World border thing
 
 import {Box3, Vector3} from "three";
+import {BoundaryBehaviour} from "@drone-swarm/shared";
 
 export class Bounds {
   private box: Box3;
@@ -8,12 +9,27 @@ export class Bounds {
   readonly centre: Vector3 = new Vector3();
   readonly size: Vector3 = new Vector3();
 
-  constructor(readonly min: Vector3, readonly max: Vector3) {
+  readonly preferredBehaviour: BoundaryBehaviour = BoundaryBehaviour.REFLECT;
+
+  constructor(readonly min: Vector3, readonly max: Vector3, behaviour?: BoundaryBehaviour) {
     this.min = min;
     this.max = max;
     this.box = new Box3(min, max);
     this.box.getCenter(this.centre)
     this.box.getSize(this.size);
+    if (behaviour) this.preferredBehaviour = behaviour;
+  }
+
+  public doPreferred(p: Vector3, v: Vector3, saveTo: Vector3): Vector3 {
+    switch (this.preferredBehaviour) {
+      case BoundaryBehaviour.CLAMP:
+        return this.clamp(p, saveTo);
+      case BoundaryBehaviour.REFLECT:
+        saveTo = this.reflect(p, v);
+        return saveTo;
+      case BoundaryBehaviour.WRAP:
+        return this.wrap(p, saveTo);
+    }
   }
 
   public contains(p: Vector3) {
@@ -24,7 +40,7 @@ export class Bounds {
     return this.box.clampPoint(p, saveTo)
   }
 
-  public reflect(position: Vector3, velocity: Vector3) {
+  public reflect(position: Vector3, velocity: Vector3): Vector3 {
     // DOES NOT MANIPULATE P.
     const next = position.clone().add(velocity)
     const reflectedVelocity = velocity.clone();
