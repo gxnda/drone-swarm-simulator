@@ -37,8 +37,6 @@ export class WorldView {
       worldSize: world.size,
       boundsMin: world.bounds.min,
       boundsMax: world.bounds.max,
-
-      droneCount: 0,
       networkConfig: {} as NetworkConfig,
       seed: 0,
       algorithmConfig: {} as AlgorithmConfig,

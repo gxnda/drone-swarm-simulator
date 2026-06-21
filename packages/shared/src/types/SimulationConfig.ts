@@ -4,7 +4,6 @@ import {AlgorithmConfig} from "./AlgorithmConfig";
 import {NetworkConfig} from "./NetworkConfig";
 
 export interface SimulationConfig {
-  readonly droneCount: number;
   readonly droneMaxSpeed: number;
   readonly droneMaxAccel: number; // max acceleration per tick
   readonly worldSize: Vector3;
