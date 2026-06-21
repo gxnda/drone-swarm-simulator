@@ -58,11 +58,13 @@ export class NetworkTopology {
     this.qualities = new Map();
     drones.forEach(from => {
       drones.forEach(to => {
-        const quality = qualities.get(idsToPair(from.id, to.id))!;
-        quality.latencyTicks = this.latencyModel.getLatency(from, to, this, this.rng);
-        this.setQuality(from.id, to.id, quality);
-      })
-    });
+        const quality = qualities.get(idsToPair(from.id, to.id));
+        if (quality) {
+            quality.latencyTicks = this.latencyModel.getLatency(from, to, this, this.rng);
+            this.setQuality(from.id, to.id, quality);
+         }
+       })
+     });
   }
 
   public getNeighbours(id: DroneId): Set<DroneId> {
