@@ -1,5 +1,5 @@
 import {DroneId, DroneSnapshot, Message} from "@drone-swarm/shared";
-import {Quaternion, Vector3} from "three";
+import {Matrix4, Quaternion, Vector3} from "three";
 import {DroneState} from "./DroneState";
 
 export class Drone {
@@ -9,6 +9,9 @@ export class Drone {
   public velocity: Vector3 = new Vector3(0, 0, 0);
   public acceleration: Vector3 = new Vector3(0, 0, 0);
 
+  readonly maxSpeed: number | null = null;
+  readonly maxAcceleration: number | null = null;
+
   public communicationRange: number;
 
   private state: DroneState | null = null;
@@ -17,13 +20,48 @@ export class Drone {
 
   private inbox: Message[];
 
-  constructor(id: DroneId, location: Vector3, range: number, orientation?: Quaternion) {
+  constructor(id: DroneId, location: Vector3, range: number, maxSpeed?: number, maxAcceleration?: number) {
     this.id = id;
     this.location = location;
     this.communicationRange = range;
-    this.orientation = orientation ?? new Quaternion();
+    this.orientation = new Quaternion();
+
+    if (maxSpeed) this.maxSpeed = maxSpeed;
+    if (maxAcceleration) this.maxAcceleration = maxAcceleration;
 
     this.inbox = new Array<Message>();
+  }
+
+  public setOrientation(q: Quaternion) {
+    this.orientation = q;
+  }
+
+  public getOrientation(): Quaternion {
+    return this.orientation;
+  }
+
+  private smoothUpdateRotation(target: Quaternion, current: Quaternion, dt: number = 1, turnSpeed: number = 3.0) {
+    return current.slerp(target, Math.min(1, turnSpeed * dt))
+  }
+
+  public rotateToMatchVelocityWithBanking() {
+    if (this.velocity.lengthSq() < 1e-8) return this.orientation;
+
+    const forward = this.velocity.clone().normalize();
+
+    let up = new Vector3(0, 1, 0);
+    const accPerp = this.acceleration.clone().addScaledVector(forward, -this.acceleration.dot(forward));
+    if (accPerp.lengthSq() > 1e-8) {
+      up = accPerp.normalize();
+    }
+    const target = new Quaternion();
+    const m = new Matrix4().lookAt(
+      new Vector3(0, 0, 0), forward, up
+    )
+    target.setFromRotationMatrix(m);
+
+    this.setOrientation(this.smoothUpdateRotation(target, this.orientation));
+    return this.orientation;
   }
 
   private markAsActive(): void {
@@ -77,6 +115,10 @@ export class Drone {
 
   public setInbox(inbox: Message[]): void {
     this.inbox = inbox;
+  }
+
+  public clearInbox(): void {
+    this.inbox = [];
   }
 
   public getInbox(): Message[] {
