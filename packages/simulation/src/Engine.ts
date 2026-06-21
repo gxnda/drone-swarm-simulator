@@ -1,7 +1,7 @@
-import {World} from "./world/World";
+import {World, WorldView} from "./world/World";
 import {NetworkTopology} from "./network/NetworkTopology";
 import {
-  DroneId,
+  DroneId, Message,
   SeededRng,
   SimulationConfig,
   SpawnStrategy, WorldSnapshot
@@ -12,6 +12,7 @@ import {Drone} from "./drone/Drone";
 import {ICoordinationAlgorithm} from "./algorithms/ICoordinationAlgorithm";
 import {AlgorithmFactory} from "./algorithms/AlgorithmFactory";
 import {MessageBus} from "./network/MessageBus";
+import {DroneState} from "./drone/DroneState";
 
 export class Engine {
   readonly world: World;
@@ -30,7 +31,7 @@ export class Engine {
     this.rng = new SeededRng(config.seed)
     this.running = false;
     this.world.add(this.createDrones(config.spawnStrategy, config.algorithmConfig.communicationRange));
-    this.topology = NetworkTopology.buildFromConfig(
+    this.topology = NetworkTopology.fromConfig(
       new Set<Drone>(this.world.getDrones()),
       this.rng,
       config.networkConfig
@@ -44,10 +45,12 @@ export class Engine {
     const drones: Drone[] = [];
     for (let i = 0; i < locations.length; i++) {
       drones.push(new Drone(
-        `${1}` as DroneId,
-        locations[i],
-        range
-      ))
+          `${1}` as DroneId,
+          locations[i]!,
+          range,
+          this.config.droneMaxSpeed,
+          this.config.droneMaxAccel,
+        ))
     }
     return drones;
   }
@@ -68,11 +71,114 @@ export class Engine {
     this.messageBus.deliver(droneIdMap, tick)
   }
 
+  private updateDroneStates(drones: ReadonlySet<Drone>): void {
+    drones.forEach((drone) => {
+      const degree = this.topology.getDegree(drone.id);
+      if (degree === 0) drone.setState(DroneState.ISOLATED);
+      else drone.setState(DroneState.ACTIVE);
+    })
+  }
+
+  private computeAllDesiredVelocities(drones: ReadonlySet<Drone>): Map<Drone, Vector3> {
+    const vels: Map<Drone, Vector3> = new Map();
+    drones.forEach((drone) => {
+      const neighbours: Drone[] = []
+      this.topology.getNeighbours(drone.id).forEach((nId) => {
+        neighbours.push(this.world.droneIdMap.get(nId)!)
+      })
+      vels.set(drone, this.algorithm.computeDesiredVelocity(drone, neighbours, WorldView.fromWorld(this.world)))
+    })
+    return vels
+  }
+
+  private computeAllMessages(drones: ReadonlySet<Drone>): Map<Drone, readonly Message[]> {
+    const messages: Map<Drone, readonly Message[]> = new Map();
+    drones.forEach((drone) => {
+      const neighbours: Drone[] = []
+      this.topology.getNeighbours(drone.id).forEach((nId) => {
+        neighbours.push(this.world.droneIdMap.get(nId)!)
+      })
+      messages.set(drone, this.algorithm.computeOutgoingMessages(drone, neighbours, WorldView.fromWorld(this.world)))
+    })
+    return messages;
+  }
+
+  private applyAndClampVelocities(drones: ReadonlySet<Drone>, velocities: Map<Drone, Vector3>): void {
+    drones.forEach((drone) => {
+      const lastVelocity = drone.velocity.clone();
+      let velocity = velocities.get(drone)!.clone();
+      if (drone.maxSpeed && velocity.lengthSq() > drone.maxSpeed ** 2) {
+        velocity = velocity.normalize().multiplyScalar(drone.maxSpeed);
+      }
+      let accel = velocity.clone().sub(lastVelocity);
+      if (drone.maxAcceleration && accel.lengthSq() > drone.maxAcceleration ** 2) {
+        accel = accel.normalize().multiplyScalar(drone.maxAcceleration);
+        velocity = lastVelocity.clone().add(accel);
+      }
+      drone.velocity = velocity.clone();
+    })
+  }
+
+  private addMessagesToBus(messages: Map<Drone, readonly Message[]>): void {
+    messages.forEach((msgs, drone) => {
+      msgs.forEach((msg) => {
+        this.messageBus.send(msg, this.world.tick, this.topology.getQuality(drone.id, msg.recipient), this.rng);
+      });
+    })
+  }
+
+  private applyObstacleAvoidance(_drones: ReadonlySet<Drone>) {
+    // TODO
+  }
+
+  private applyBoundaryBehaviour(drones: ReadonlySet<Drone>) {
+    drones.forEach((drone) => {
+      this.world.bounds.doPreferred(drone.location, drone.velocity, drone.velocity);
+    })
+  }
+
+  private applyVelocity(drones: ReadonlySet<Drone>) {
+    drones.forEach((drone) => {
+      drone.location.add(drone.velocity);
+    })
+  }
+
+  private updateDroneOrientations(drones: ReadonlySet<Drone>) {
+    drones.forEach((drone) => {
+      drone.rotateToMatchVelocityWithBanking()
+    })
+  }
+
+  private clearInboxes(drones: ReadonlySet<Drone>) {
+    drones.forEach((drone) => drone.clearInbox())
+  }
+
+  private getMetrics(_drones: ReadonlySet<Drone>) {
+    // TODO
+  }
+
   public step(): WorldSnapshot {
     this.sendAllDueMessages(this.world.droneIdMap, this.world.tick);
+    const drones: ReadonlySet<Drone> = this.world.getDrones();
+    this.topology.refresh(drones);
+    this.updateDroneStates(drones);
+    const desiredVelocities = this.computeAllDesiredVelocities(drones);
+    const messages = this.computeAllMessages(drones);
+    this.addMessagesToBus(messages);
 
-    this.topology.refresh(new Set(this.world.getDrones()));
+    this.applyAndClampVelocities(drones, desiredVelocities);
+    this.applyObstacleAvoidance(drones);
+    this.applyBoundaryBehaviour(drones);
 
+    this.applyVelocity(drones);
+    this.updateDroneStates(drones);
+    this.clearInboxes(drones);
+
+    this.getMetrics(drones);
+
+    this.world.incrementTime();
+
+    return this.world.snapshot();
 
   }
 
