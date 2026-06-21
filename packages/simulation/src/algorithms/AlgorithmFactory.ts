@@ -1,12 +1,12 @@
-import {AlgorithmConfig} from "@drone-swarm/shared";
+import {AlgorithmConfig, BoidsConfig} from "@drone-swarm/shared";
 import {ICoordinationAlgorithm} from "./ICoordinationAlgorithm";
+import {BoidAlgorithm} from "./boids/BoidAlgorithm";
 
 export class AlgorithmFactory {
   static fromConfig(config: AlgorithmConfig): ICoordinationAlgorithm {
     switch (config.id) {
       case "boids":
-        // TODO
-        throw new Error("Not implemented.");
+        return new BoidAlgorithm(config as BoidsConfig);
       case "gossip":
         // TODO
         throw new Error("Not implemented.");
