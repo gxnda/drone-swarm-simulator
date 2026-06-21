@@ -45,7 +45,7 @@ export class Engine {
     const drones: Drone[] = [];
     for (let i = 0; i < locations.length; i++) {
       drones.push(new Drone(
-          `${1}` as DroneId,
+          `${i}` as DroneId,
           locations[i]!,
           range,
           this.config.droneMaxSpeed,
