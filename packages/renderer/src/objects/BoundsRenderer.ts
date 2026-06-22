@@ -13,7 +13,10 @@ export class BoundsRenderer {
     this.box = boundBox.clone();
     const centre = new Vector3();
     this.box.getCenter(centre);
-    const geometry = new BoxGeometry(boundBox.max.x - boundBox.min.x, boundBox.max.y - boundBox.min.y, boundBox.max.z - boundBox.min.z);
+    const geometry = new BoxGeometry(
+      boundBox.max.x - boundBox.min.x,
+      boundBox.max.y - boundBox.min.y,
+      boundBox.max.z - boundBox.min.z);
     const wireframe = new EdgesGeometry(geometry)
     this.wireframe = new LineSegments(wireframe);
     this.wireframe.position.copy(centre);
