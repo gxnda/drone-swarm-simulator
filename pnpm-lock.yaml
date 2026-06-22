@@ -38,6 +38,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@drone-swarm/renderer':
+        specifier: workspace:*
+        version: link:../../packages/renderer
       react:
         specifier: ^19.2.6
         version: 19.2.6
@@ -84,6 +87,9 @@ importers:
 
   packages/renderer:
     dependencies:
+      '@drone-swarm/shared':
+        specifier: workspace:*
+        version: link:../shared
       three:
         specifier: ^0.184.0
         version: 0.184.0

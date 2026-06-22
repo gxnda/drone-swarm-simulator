@@ -13,6 +13,7 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
+    "@drone-swarm/shared": "workspace:*",
     "three": "^0.184.0"
   }
 }
