@@ -16,6 +16,7 @@ export {BoundaryBehaviour} from "./types/SimulationConfig";
 export type {SpawnStrategy} from "./types/SpawnStrategy";
 export type {AlgorithmConfig, BoidsConfig} from "./types/AlgorithmConfig";
 export type {LinkQuality} from "./types/LinkQuality";
+export {DroneState} from "./types/DroneState";
 export type {
   NetworkConfig,
   ContentionLatencyConfig,

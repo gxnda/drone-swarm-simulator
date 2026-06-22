@@ -1,6 +1,5 @@
-import {DroneId, DroneSnapshot, Message} from "@drone-swarm/shared";
+import {DroneId, DroneSnapshot, DroneState, Message} from "@drone-swarm/shared";
 import {Matrix4, Quaternion, Vector3} from "three";
-import {DroneState} from "./DroneState";
 
 export class Drone {
   readonly id: DroneId;

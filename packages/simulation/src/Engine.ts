@@ -1,7 +1,7 @@
 import {World, WorldView} from "./world/World";
 import {NetworkTopology} from "./network/NetworkTopology";
 import {
-  DroneId, Message,
+  DroneId, DroneState, Message,
   SeededRng,
   SimulationConfig,
   SpawnStrategy, WorldSnapshot
@@ -12,7 +12,6 @@ import {Drone} from "./drone/Drone";
 import {ICoordinationAlgorithm} from "./algorithms/ICoordinationAlgorithm";
 import {AlgorithmFactory} from "./algorithms/AlgorithmFactory";
 import {MessageBus} from "./network/MessageBus";
-import {DroneState} from "./drone/DroneState";
 
 export class Engine {
   readonly world: World;
