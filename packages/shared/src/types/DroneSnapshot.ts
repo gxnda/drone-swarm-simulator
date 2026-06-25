@@ -8,9 +8,9 @@ export class DroneSnapshot extends ISnapshot {
     public orientation: Quaternion;
     public velocity: Vector3;
     public range: number;
-    public state: string | null;
+    public state: string;
 
-    constructor(id: DroneId, location: Vector3, orientation: Quaternion, velocity: Vector3, range: number, state: string | null) {
+    constructor(id: DroneId, location: Vector3, orientation: Quaternion, velocity: Vector3, range: number, state: string) {
         super()
         this.id = id;
         this.location = location.clone();
@@ -18,7 +18,6 @@ export class DroneSnapshot extends ISnapshot {
         this.velocity = velocity.clone();
         this.state = state;
         this.range = range
-
     }
 
 }

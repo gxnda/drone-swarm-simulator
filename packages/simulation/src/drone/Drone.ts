@@ -13,7 +13,7 @@ export class Drone {
 
   public communicationRange: number;
 
-  private state: DroneState | null = null;
+  private state: DroneState = DroneState.ACTIVE;
   private failedAtTick: number | null = null;
   private becameIsolatedAtTick: number | null = null;
 
