@@ -49,6 +49,7 @@ export class DroneInstancedMesh {
     } else {
       this.dummy.scale.set(1, 1, 1)
     }
+    this.dummy.updateMatrix();
     this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);
     this.mesh.instanceColor?.setUsage(DynamicDrawUsage);
     this.mesh.count = 0
@@ -78,7 +79,7 @@ export class DroneInstancedMesh {
   private setPositionAndOrientationAt(index: number, position: Vector3Like, orientation: Quaternion) {
     this.dummy.position.copy(position);
     this.dummy.setRotationFromQuaternion(orientation);
-
+    this.dummy.updateMatrix();
     this.mesh.setMatrixAt(index, this.dummy.matrix);
   }
 
@@ -112,6 +113,9 @@ export class DroneInstancedMesh {
     });
 
     this.mesh.instanceMatrix.needsUpdate = true;
+    if (this.mesh.instanceColor) {
+      this.mesh.instanceColor.needsUpdate = true;
+    }
   }
 
   public dispose(): void {
