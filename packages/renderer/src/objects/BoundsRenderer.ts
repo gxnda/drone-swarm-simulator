@@ -6,7 +6,7 @@ import {
 } from "three";
 
 export class BoundsRenderer {
-  private wireframe: LineSegments;
+  public wireframe: LineSegments;
   public readonly box: Box3 = new Box3();
 
   constructor(boundBox: Box3) {

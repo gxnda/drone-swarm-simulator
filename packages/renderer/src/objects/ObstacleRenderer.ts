@@ -9,10 +9,15 @@ export class ObstacleRenderer {
 
   constructor(material: Material, os?: ReadonlyArray<Obstacle>) {
     this.material = material;
-    if (os) {
-      this.add(os)
-    }
+    if (os) this.add(os);
+  }
 
+  public isEmpty(): boolean {
+    return this.meshes.size !== 0;
+  }
+
+  public getAllMeshes(): Mesh[] {
+    return Array.from(this.meshes.values())
   }
 
   public add(os: ReadonlyArray<Obstacle>): void {

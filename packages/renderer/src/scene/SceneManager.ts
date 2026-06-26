@@ -1,6 +1,6 @@
 import {
   AmbientLight,
-  DirectionalLight, Fog,
+  DirectionalLight, Fog, Object3D,
   PerspectiveCamera,
   Scene, Vector3,
   WebGLRenderer
@@ -38,6 +38,18 @@ export class SceneManager {
     this.scene.add(this.lights.directional);
 
     this.cameraController = new CameraController(this.camera, canvas);
+  }
+
+  public add(object: Object3D): void {
+    this.scene.add(object);
+  }
+
+  public addMany(objects: Object3D[]): void {
+    this.scene.add(...objects);
+  }
+
+  public remove(object: Object3D): void {
+    this.scene.remove(object);
   }
 
   public resize(width: number, height: number) {

@@ -30,7 +30,7 @@ export class CameraController {
     this.followTargetId = id;
   }
 
-  public update(snapshot: WorldSnapshot, deltaTime: number): void {
+  public update(deltaTime: number, _snapshot?: WorldSnapshot): void {
     if (this.mode === CameraMode.Orbit) {
       this.orbitControls.update(deltaTime);
     }

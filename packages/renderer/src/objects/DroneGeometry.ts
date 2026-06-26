@@ -1,16 +1,16 @@
 import {GLTF, GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {BufferGeometry, Mesh} from "three";
 
+const loader: GLTFLoader = new GLTFLoader();
+
 export enum DroneModelPaths {
   paper_plane = "assets/paper-plane/scene.gltf"
 }
 
 export class DroneGeometry {
-  private readonly loader: GLTFLoader = new GLTFLoader();
-
-  public async load(url: string): Promise<GLTF> {
+  public static async load(url: string): Promise<GLTF> {
     return new Promise((resolve, reject) => {
-      this.loader.load(
+      loader.load(
         url, (gltf) => resolve(gltf),
         undefined,
         (error) => reject(error)
@@ -18,7 +18,7 @@ export class DroneGeometry {
     });
   }
 
-  public getGeometriesFrom(gltf: GLTF) {
+  public static getGeometriesFrom(gltf: GLTF) {
     const geometries: BufferGeometry[] = [];
     gltf.scene.traverse((obj) => {
       //  INFO: This is bad apparently if there are different versions of

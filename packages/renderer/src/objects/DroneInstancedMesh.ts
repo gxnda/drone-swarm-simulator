@@ -16,7 +16,7 @@ import {disposeObject3D} from "../utils/disposer";
 
 export class DroneInstancedMesh {
   public  readonly capacity: number;
-  private readonly mesh: InstancedMesh;
+  readonly mesh: InstancedMesh;
   private _selected: DroneId | null = null;
   private idToIndex: Map<DroneId, number> = new Map();
   private indexToId: Map<number, DroneId> = new Map();
@@ -26,6 +26,10 @@ export class DroneInstancedMesh {
 
   public get selected(): DroneId | null {
     return this._selected;
+  }
+
+  public instanceIdToIndex(instanceId: number): DroneId | null {
+    return this.indexToId.get(instanceId) ?? null;
   }
 
   constructor(geometry: BufferGeometry, material: Material, capacity: number, scale?: Vector3Like) {
