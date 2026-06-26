@@ -83,14 +83,14 @@ export class BoidAlgorithm implements ICoordinationAlgorithm {
         )
       }
     })
-    return separation;
+    return separation.normalize();
   }
 
   private computeAlignment(neighbours: ReadonlyArray<Readonly<Drone>>): Vector3 {
     return neighbours.reduce(
       (acc, drone) =>
         acc.add(drone.velocity), new Vector3(0, 0, 0)
-    ).divideScalar(neighbours.length);
+    ).divideScalar(neighbours.length).normalize();
   }
 
   // onDroneFailed(failedId: DroneId, survivors: ReadonlyArray<Drone>): void {
