@@ -1,7 +1,7 @@
 // INFO: We assume drones never get removed (only ever failed)
 
 import {
-  BufferGeometry,
+  BufferGeometry, Color,
   DynamicDrawUsage,
   InstancedMesh,
   Material,
@@ -41,15 +41,23 @@ export class DroneInstancedMesh {
     );
 
     this.capacity = capacity;
-    this.mesh = new InstancedMesh(geometry, material, capacity);
 
     material.vertexColors = true;
+    this.mesh = new InstancedMesh(geometry, material, capacity);
+
     if (scale) {
       this.dummy.scale.copy(scale);
     } else {
       this.dummy.scale.set(1, 1, 1)
     }
     this.dummy.updateMatrix();
+
+    // is this needed? I put it to try to fix the all-black bug
+    const defaultColor = new Color(0xffffff);
+    for (let i = 0; i < capacity; i++) {
+      this.mesh.setColorAt(i, defaultColor);
+    }
+
     this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);
     this.mesh.instanceColor?.setUsage(DynamicDrawUsage);
     this.mesh.count = 0
