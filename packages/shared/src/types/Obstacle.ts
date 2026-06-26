@@ -1,5 +1,6 @@
 import {Box3, Vector3} from "three";
-import {ObstacleId, SerialisedObstacle} from "@drone-swarm/shared";
+import {ObstacleId} from "./ObstacleId";
+import {SerialisedObstacle} from "./SerialisedObstacle";
 
 export class Obstacle {
   id: ObstacleId

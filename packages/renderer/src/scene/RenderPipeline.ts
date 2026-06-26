@@ -5,7 +5,7 @@ import {BoundsRenderer} from "../objects/BoundsRenderer";
 import {ObstacleRenderer} from "../objects/ObstacleRenderer";
 import {
   DroneId,
-  SimulationConfig, EngineSnapshot,
+  SimulationConfig, EngineSnapshot, SerialisedObstacle,
 } from "@drone-swarm/shared";
 import {DroneGeometry, DroneModelPaths} from "../objects/DroneGeometry";
 import {
@@ -47,6 +47,7 @@ export class RenderPipeline {
       color: 0x00ff00,
       wireframe: true
     }));
+    this.addObstacles(config.obstacles);
   }
 
   static async create(canvas: HTMLCanvasElement, config: SimulationConfig): Promise<RenderPipeline> {
@@ -55,20 +56,13 @@ export class RenderPipeline {
     return new RenderPipeline(canvas, geometry, config);
   }
 
-  public loadFromConfig(config: SimulationConfig) {
-    // TODO!
+  public addObstacles(toAdd: SerialisedObstacle[]) {
+    this.obstacleRenderer.add(toAdd.map((o) => Obstacle.deserialise(o)));
+    this.sceneManager.addMany(this.obstacleRenderer.getAllMeshes());
   }
 
   public update(snapshot: EngineSnapshot) {
     this.lastSnapshot = snapshot;
-    if (snapshot.world.obstacles.length !== 0 && this.obstacleRenderer.isEmpty()) {
-      const obstacles: Obstacle[] = [];
-      snapshot.world.obstacles.forEach((o) => {
-        obstacles.push(Obstacle.deserialise(o))
-      });
-      this.obstacleRenderer.add(obstacles);
-      this.sceneManager.addMany(this.obstacleRenderer.getAllMeshes())
-    }
     this.droneMesh.update(snapshot.world.droneSnapshots);
 
     const edges: Array<[DroneId, DroneId]> = [];

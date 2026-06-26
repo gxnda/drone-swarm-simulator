@@ -46,6 +46,7 @@ describe("Engine", () => {
                     range: 20
                 }
             },
+            obstacles: [],
             droneMaxSpeed: 5,
             droneMaxAccel: 1,
             worldSize: new Vector3(200, 200, 200)
@@ -93,6 +94,7 @@ describe("Engine", () => {
             },
             droneMaxSpeed: 5,
             droneMaxAccel: 1,
+            obstacles: [],
             worldSize: new Vector3(200, 200, 200)
         };
 
@@ -144,6 +146,7 @@ describe("Engine", () => {
                     range: 0.0001
                 }
             },
+            obstacles: [],
             droneMaxSpeed: 5,
             droneMaxAccel: 1,
             worldSize: new Vector3(200, 200, 200)
@@ -192,6 +195,7 @@ describe("Engine", () => {
                     range: 20
                 }
             },
+            obstacles: [],
             droneMaxSpeed: 5,
             droneMaxAccel: 1,
             worldSize: new Vector3(200, 200, 200)

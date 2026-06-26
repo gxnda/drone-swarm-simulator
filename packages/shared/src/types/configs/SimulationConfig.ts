@@ -2,6 +2,7 @@ import {Vector3} from "three";
 import {SpawnStrategy} from "../SpawnStrategy";
 import {AlgorithmConfig} from "./AlgorithmConfig";
 import {NetworkConfig} from "./NetworkConfig";
+import {SerialisedObstacle} from "../SerialisedObstacle";
 
 export interface SimulationConfig {
   readonly droneMaxSpeed: number;
@@ -12,7 +13,7 @@ export interface SimulationConfig {
   readonly spawnStrategy: SpawnStrategy;
   readonly algorithmConfig: AlgorithmConfig;
   readonly networkConfig: NetworkConfig;
-  readonly obstacles: ObstacleConfig[];
+  readonly obstacles: SerialisedObstacle[];
   readonly seed: number | string;
   readonly boundsMin: Vector3;
   readonly boundsMax: Vector3;

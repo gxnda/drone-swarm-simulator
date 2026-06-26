@@ -4,7 +4,7 @@ import {
   DroneId, DroneState, WorldSnapshot, Message,
   SeededRng,
   SimulationConfig,
-  SpawnStrategy, WorldSnapshot, EngineSnapshot
+  SpawnStrategy, EngineSnapshot
 } from "@drone-swarm/shared";
 import {DroneFactory} from "./drone/DroneFactory";
 import {Vector3} from "three";
