@@ -7,10 +7,9 @@ import {
   DroneId,
   SimulationConfig, EngineSnapshot, SerialisedObstacle,
 } from "@drone-swarm/shared";
-import {DroneGeometry, DroneModelPaths} from "../objects/DroneGeometry";
 import {
   Box3,
-  BufferGeometry,
+  BufferGeometry, ConeGeometry,
   MeshBasicMaterial,
   Raycaster, Vector2,
   Vector3
@@ -38,7 +37,7 @@ export class RenderPipeline {
     this.sceneManager = new SceneManager(canvas);
     this.droneMesh = new DroneInstancedMesh(
       geometry,
-      new MeshBasicMaterial({color: 0xf344f1, vertexColors: true}),
+      new MeshBasicMaterial({color: 0xffffff, vertexColors: true}),
       1000,
     )
     this.sceneManager.add(this.droneMesh.mesh);
@@ -55,8 +54,9 @@ export class RenderPipeline {
   }
 
   static async create(canvas: HTMLCanvasElement, config: SimulationConfig): Promise<RenderPipeline> {
-    const gltf = await DroneGeometry.load(DroneModelPaths.paper_plane);
-    const geometry = DroneGeometry.getGeometriesFrom(gltf)[0]!;
+    // const gltf = await DroneGeometry.load(DroneModelPaths.paper_plane);
+    // const geometry = DroneGeometry.getGeometriesFrom(gltf)[0]!;
+    const geometry = new ConeGeometry(5, 10, 4);
     return new RenderPipeline(canvas, geometry, config);
   }
 
@@ -70,7 +70,6 @@ export class RenderPipeline {
     this.locationBuffer.clear();
     this.lastSnapshot = snapshot;
     this.droneMesh.update(snapshot.world.droneSnapshots);
-
 
     snapshot.topology.adjacency.forEach((edgeSet, from) => {
       edgeSet.forEach((to) => {
