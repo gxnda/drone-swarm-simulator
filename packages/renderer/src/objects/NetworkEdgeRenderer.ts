@@ -5,7 +5,7 @@ import {
 import {DroneId} from "@drone-swarm/shared";
 
 export class NetworkEdgeRenderer {
-  private lineSegments: LineSegments;
+  readonly lineSegments: LineSegments;
   private readonly maxEdges: number;
   private readonly edges: Float32Array;
   private readonly geometry: BufferGeometry;

@@ -1,10 +1,10 @@
 import {World, WorldView} from "./world/World";
 import {NetworkTopology} from "./network/NetworkTopology";
 import {
-  DroneId, DroneState, Message,
+  DroneId, DroneState, WorldSnapshot, Message,
   SeededRng,
   SimulationConfig,
-  SpawnStrategy, WorldSnapshot
+  SpawnStrategy, WorldSnapshot, EngineSnapshot
 } from "@drone-swarm/shared";
 import {DroneFactory} from "./drone/DroneFactory";
 import {Vector3} from "three";
@@ -183,6 +183,13 @@ export class Engine {
 
     return this.world.snapshot();
 
+  }
+
+  public snapshot(): EngineSnapshot {
+    return new EngineSnapshot(
+      this.world.snapshot(),
+      this.topology.snapshot()
+    )
   }
 
 }

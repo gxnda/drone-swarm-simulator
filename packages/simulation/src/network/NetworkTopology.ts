@@ -3,7 +3,7 @@ import {
   DroneIdPair,
   idsToPair,
   LinkQuality, NetworkConfig,
-  SeededRng
+  SeededRng, TopologySnapshot
 } from "@drone-swarm/shared";
 import {Drone} from "../drone/Drone";
 import {IAttenuationModel} from "./models/attenuation/IAttenuationModel";
@@ -219,5 +219,9 @@ export class NetworkTopology {
       })
     })
     return edges as ReadonlyArray<[DroneId, DroneId]>;
+  }
+
+  public snapshot(): TopologySnapshot {
+    return new TopologySnapshot(this.adjacency, this.qualities);
   }
 }
