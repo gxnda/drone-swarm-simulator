@@ -45,6 +45,7 @@ export class SceneManager {
   }
 
   public addMany(objects: Object3D[]): void {
+    if (objects.length === 0) return;
     this.scene.add(...objects);
   }
 
