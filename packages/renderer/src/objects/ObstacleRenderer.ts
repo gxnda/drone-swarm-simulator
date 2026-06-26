@@ -1,7 +1,6 @@
 import {BoxGeometry, Material, Matrix4, Mesh, Vector3} from "three";
-import {ObstacleId} from "@drone-swarm/shared";
+import {Obstacle, ObstacleId} from "@drone-swarm/shared";
 import {disposeObject3D} from "../utils/disposer";
-import {Obstacle} from "@drone-swarm/simulation";
 
 export class ObstacleRenderer {
   private meshes: Map<ObstacleId, Mesh> = new Map();
