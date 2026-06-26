@@ -7,7 +7,7 @@ import {
   WorldSnapshot
 } from "@drone-swarm/shared";
 import {Drone} from "../drone/Drone";
-import {Obstacle} from "../../../shared/src/types/Obstacle";
+import {Obstacle} from "@drone-swarm/shared";
 import {Bounds} from "./Bounds";
 
 /**

@@ -31,3 +31,4 @@ export type {
 
 // Other
 export {Constants} from "./constants";
+export {Obstacle} from "./types/Obstacle";

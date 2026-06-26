@@ -96,8 +96,8 @@ export class SpatialHash<Type extends SpatialEntity> {
 
     private insertItem(item: Type) {
         if ("location" in item) {
-            const chunk = this.getChunkContaining(item.location);
-            const stringCoord = SpatialHash.Vector3ToChunkCoord(item.location);
+            const chunk = this.getChunkContaining(item.location!);
+            const stringCoord = SpatialHash.Vector3ToChunkCoord(item.location!);
             this.addToChunk(chunk, stringCoord, item);
         } else if ("box" in item) {
             const box = item.box;
@@ -210,7 +210,7 @@ export class SpatialHash<Type extends SpatialEntity> {
 
     public neighbouringItem(item: Type, radius: number = this.chunkSize): Array<Type> {
         if ("location" in item) {
-            const res = this.neighbouringCoord(item.location, radius);
+            const res = this.neighbouringCoord(item.location!, radius);
             return res.filter(el => el != item);
         } else {
             throw new Error("Could not find single location of object");
@@ -219,7 +219,7 @@ export class SpatialHash<Type extends SpatialEntity> {
 
     private distanceFromPointToItem(p: Vector3, item: Type): number {
         if ('location' in item) {
-            return p.distanceTo(item.location);
+            return p.distanceTo(item.location!);
         } else {
             return item.box.distanceToPoint(p);
         }

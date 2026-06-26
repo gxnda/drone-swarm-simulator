@@ -1,1 +1,1 @@
-export {Obstacle} from "../../shared/src/types/Obstacle"
+export {Engine} from "./Engine";
