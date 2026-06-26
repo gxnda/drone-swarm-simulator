@@ -30,7 +30,7 @@ export class SceneManager {
     this.camera.position.set(0, 30, 80);
     this.camera.lookAt(new Vector3(0, 0, 0));
     this.lights = {
-      ambient: new AmbientLight(0xffffff, 0.5),
+      ambient: new AmbientLight(0xffffff, 4),
       directional: new DirectionalLight(0xffffff, 1.0)
     };
     this.lights.directional.position.set(50, 100, 50);
