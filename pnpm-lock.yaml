@@ -41,12 +41,21 @@ importers:
       '@drone-swarm/renderer':
         specifier: workspace:*
         version: link:../../packages/renderer
+      '@drone-swarm/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@drone-swarm/simulation':
+        specifier: workspace:*
+        version: link:../../packages/simulation
       react:
         specifier: ^19.2.6
         version: 19.2.6
       react-dom:
         specifier: ^19.2.6
         version: 19.2.6(react@19.2.6)
+      three:
+        specifier: ^0.184.0
+        version: 0.184.0
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -60,6 +69,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.15)
+      '@types/three':
+        specifier: ^0.184.1
+        version: 0.184.1
       '@vitejs/plugin-react':
         specifier: ^6.0.1
         version: 6.0.2(vite@8.0.14(@types/node@24.12.4)(esbuild@0.28.0)(tsx@4.22.3))
@@ -137,7 +149,23 @@ importers:
         version: 6.0.3
 
   packages/ui:
+    dependencies:
+      '@drone-swarm/renderer':
+        specifier: workspace:*
+        version: link:../renderer
+      '@drone-swarm/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@drone-swarm/simulation':
+        specifier: workspace:*
+        version: link:../simulation
+      three:
+        specifier: ^0.184.0
+        version: 0.184.0
     devDependencies:
+      '@types/three':
+        specifier: ^0.184.1
+        version: 0.184.1
       typescript:
         specifier: ^6.0.3
         version: 6.0.3

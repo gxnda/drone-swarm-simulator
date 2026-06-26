@@ -9,6 +9,13 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@types/three": "^0.184.1",
     "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "three": "^0.184.0",
+    "@drone-swarm/shared": "workspace:*",
+    "@drone-swarm/simulation": "workspace:*",
+    "@drone-swarm/renderer": "workspace:*"
   }
 }
