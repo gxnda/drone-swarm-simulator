@@ -4,7 +4,7 @@ import {BufferGeometry, Mesh} from "three";
 const loader: GLTFLoader = new GLTFLoader();
 
 export enum DroneModelPaths {
-  paper_plane = "assets/paper-plane/scene.gltf"
+  paper_plane = "/assets/paper-plane/scene.gltf"
 }
 
 export class DroneGeometry {
