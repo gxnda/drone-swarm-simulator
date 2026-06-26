@@ -1,5 +1,5 @@
 import {Vector3} from "three";
-import {SpawnStrategy} from "./SpawnStrategy";
+import {SpawnStrategy} from "../SpawnStrategy";
 import {AlgorithmConfig} from "./AlgorithmConfig";
 import {NetworkConfig} from "./NetworkConfig";
 
@@ -12,7 +12,7 @@ export interface SimulationConfig {
   readonly spawnStrategy: SpawnStrategy;
   readonly algorithmConfig: AlgorithmConfig;
   readonly networkConfig: NetworkConfig;
-  // readonly obstacles: ObstacleConfig[];
+  readonly obstacles: ObstacleConfig[];
   readonly seed: number | string;
   readonly boundsMin: Vector3;
   readonly boundsMax: Vector3;

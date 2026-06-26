@@ -1,6 +1,6 @@
 import {DroneSnapshot} from "./DroneSnapshot";
 import {ISnapshot} from "./ISnapshot";
-import {SerialisedObstacle} from "./SerialisedObstacle";
+import {SerialisedObstacle} from "../SerialisedObstacle";
 
 export class WorldSnapshot extends ISnapshot {
   constructor(

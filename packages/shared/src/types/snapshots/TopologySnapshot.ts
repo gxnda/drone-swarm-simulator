@@ -1,6 +1,6 @@
 import {ISnapshot} from "./ISnapshot";
-import {LinkQuality} from "./LinkQuality";
-import {DroneId, DroneIdPair} from "./DroneId";
+import {LinkQuality} from "../LinkQuality";
+import {DroneId, DroneIdPair} from "../DroneId";
 
 export class TopologySnapshot extends ISnapshot {
   constructor(

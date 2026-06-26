@@ -1,4 +1,4 @@
-import {AlgorithmId} from "./AlgorithmId";
+import {AlgorithmId} from "../AlgorithmId";
 
 interface BaseAlgorithmConfig {
   readonly id: AlgorithmId;

@@ -1,4 +1,4 @@
-import {DroneId} from "./DroneId";
+import {DroneId} from "../DroneId";
 import {Quaternion, Vector3} from "three";
 import {ISnapshot} from "./ISnapshot";
 
