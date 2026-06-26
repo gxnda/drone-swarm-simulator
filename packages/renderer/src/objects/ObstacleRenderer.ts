@@ -13,7 +13,7 @@ export class ObstacleRenderer {
   }
 
   public isEmpty(): boolean {
-    return this.meshes.size !== 0;
+    return this.meshes.size === 0;
   }
 
   public getAllMeshes(): Mesh[] {
