@@ -15,7 +15,7 @@ import {
   Raycaster, Vector2,
   Vector3
 } from "three";
-import {Obstacle} from "@drone-swarm/simulation";
+import {Obstacle} from "@drone-swarm/shared";
 import {CameraMode} from "./CameraController";
 
 export class RenderPipeline {
@@ -31,7 +31,10 @@ export class RenderPipeline {
 
   private raycaster = new Raycaster();
 
-  constructor(canvas: HTMLCanvasElement, geometry: BufferGeometry, config: SimulationConfig) {
+  private edgeBuffer: Array<[DroneId, DroneId]> = [];
+  private locationBuffer: Map<DroneId, Vector3> = new Map();
+
+  private constructor(canvas: HTMLCanvasElement, geometry: BufferGeometry, config: SimulationConfig) {
     this.sceneManager = new SceneManager(canvas);
     this.droneMesh = new DroneInstancedMesh(
       geometry,
@@ -47,7 +50,8 @@ export class RenderPipeline {
       color: 0x00ff00,
       wireframe: true
     }));
-    this.addObstacles(config.obstacles);
+    this.obstacleRenderer.add(config.obstacles.map((o) => Obstacle.deserialise(o)));
+    this.sceneManager.addMany(this.obstacleRenderer.getAllMeshes());
   }
 
   static async create(canvas: HTMLCanvasElement, config: SimulationConfig): Promise<RenderPipeline> {
@@ -62,20 +66,21 @@ export class RenderPipeline {
   }
 
   public update(snapshot: EngineSnapshot) {
+    this.edgeBuffer.length = 0;
+    this.locationBuffer.clear();
     this.lastSnapshot = snapshot;
     this.droneMesh.update(snapshot.world.droneSnapshots);
 
-    const edges: Array<[DroneId, DroneId]> = [];
+
     snapshot.topology.adjacency.forEach((edgeSet, from) => {
       edgeSet.forEach((to) => {
-        edges.push([from, to])
+        this.edgeBuffer.push([from, to])
       })
     });
-    const locations: Map<DroneId, Vector3> = new Map();
     snapshot.world.droneSnapshots.forEach((droneSnapshot) => {
-      locations.set(droneSnapshot.id, droneSnapshot.location);
+      this.locationBuffer.set(droneSnapshot.id, droneSnapshot.location);
     })
-    this.networkRenderer.updateFromSnapshot(edges, locations);
+    this.networkRenderer.updateFromSnapshot(this.edgeBuffer, this.locationBuffer);
   }
 
   public resize(width: number, height: number) {
@@ -86,15 +91,15 @@ export class RenderPipeline {
     this.sceneManager.cameraController.setMode(cameraMode);
   }
 
-  public selectDroneAtScreenPosition(x: number, y: number) {
+  public getDroneAtScreenPosition(x: number, y: number): DroneId | null {
     this.raycaster.setFromCamera(new Vector2(x, y), this.sceneManager.camera)
     const closestArr = this.raycaster.intersectObject(this.droneMesh.mesh);
     if (closestArr.length === 0) {
       // didn't intersect anything
-      this.droneMesh.setSelected(null);
+      return null;
     } else {
       const closest = closestArr[0]!.instanceId!;
-      this.droneMesh.setSelected(this.droneMesh.instanceIdToIndex(closest));
+      return this.droneMesh.instanceIdToIndex(closest);
     }
   }
 

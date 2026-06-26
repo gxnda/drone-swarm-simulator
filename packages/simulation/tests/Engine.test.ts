@@ -1,12 +1,12 @@
 // @vitest-environment node
 
 import {describe, expect, it, vi} from "vitest";
-import {Engine} from "../src/Engine";
+import {Engine} from "../src";
 import {
     AlgorithmId,
     BoidsConfig,
-    BoundaryBehaviour,
-    SimulationConfig, WorldSnapshot,
+    BoundaryBehaviour, EngineSnapshot,
+    SimulationConfig,
 } from "@drone-swarm/shared";
 import {Vector3} from "three";
 
@@ -103,12 +103,10 @@ describe("Engine", () => {
         engine.start();
         expect(engine.isRunning()).toBe(true);
 
-        console.log(engine.world.droneHash.items);
-
-        const snapshot: WorldSnapshot = engine.step();
+        const snapshot: EngineSnapshot = engine.step();
         expect(snapshot).toBeDefined();
-        expect(snapshot.droneSnapshots.length).toBe(10);
-        expect(snapshot.tick).toBe(1);
+        expect(snapshot.world.droneSnapshots.length).toBe(10);
+        expect(snapshot.world.tick).toBe(1);
     });
 
     it("should not crash with zero neighbours", () => {
@@ -156,7 +154,7 @@ describe("Engine", () => {
         engine.start();
 
         // This should not throw an error
-        const snapshot: WorldSnapshot = engine.step();
+        const snapshot: EngineSnapshot = engine.step();
         expect(snapshot).toBeDefined();
     });
 

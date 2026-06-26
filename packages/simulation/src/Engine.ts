@@ -159,7 +159,7 @@ export class Engine {
     // TODO
   }
 
-  public step(): WorldSnapshot {
+  public step(): EngineSnapshot {
     this.sendAllDueMessages(this.world.droneIdMap, this.world.tick);
     const drones: ReadonlySet<Drone> = this.world.getDrones();
     this.topology.refresh(drones);
@@ -181,7 +181,7 @@ export class Engine {
 
     this.world.incrementTime();
 
-    return this.world.snapshot();
+    return this.snapshot();
 
   }
 
