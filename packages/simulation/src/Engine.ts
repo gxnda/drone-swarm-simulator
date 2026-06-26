@@ -135,7 +135,9 @@ export class Engine {
 
   private applyBoundaryBehaviour(drones: ReadonlySet<Drone>) {
     drones.forEach((drone) => {
-      drone.velocity = this.world.bounds.doPreferred(drone.location, drone.velocity, new Vector3());
+      const dict = this.world.bounds.doPreferred(drone.location, drone.velocity, new Vector3());
+      drone.location = dict.p;
+      drone.velocity = dict.v;
     })
   }
 

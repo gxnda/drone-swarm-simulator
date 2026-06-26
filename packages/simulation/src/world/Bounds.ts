@@ -20,15 +20,17 @@ export class Bounds {
     if (behaviour) this.preferredBehaviour = behaviour;
   }
 
-  public doPreferred(p: Vector3, v: Vector3, saveTo: Vector3): Vector3 {
+  public doPreferred(p: Vector3, v: Vector3, saveTo: Vector3): {p: Vector3, v: Vector3} {
     switch (this.preferredBehaviour) {
       case BoundaryBehaviour.CLAMP:
-        return this.clamp(p, saveTo);
-      case BoundaryBehaviour.REFLECT:
-        saveTo = this.reflect(p, v);
-        return saveTo;
+        return {p: this.clamp(p, saveTo), v: v};
+      case BoundaryBehaviour.REFLECT: {
+        const reflectedVel = this.reflect(p, v);
+        const clampedPos = this.clamp(p, saveTo);
+        return {p: clampedPos, v: reflectedVel};
+      }
       case BoundaryBehaviour.WRAP:
-        return this.wrap(p, saveTo);
+        return {p: this.wrap(p, saveTo), v: v};
     }
   }
 
