@@ -1,3 +1,3 @@
 
 export type SerialisedObstacle =
-  | { type: "box"; min: [number,number,number]; max: [number,number,number] };
+  | { type: "box"; id: string; min: [number,number,number]; max: [number,number,number] };

@@ -90,6 +90,9 @@ importers:
       '@drone-swarm/shared':
         specifier: workspace:*
         version: link:../shared
+      '@drone-swarm/simulation':
+        specifier: workspace:*
+        version: link:../simulation
       three:
         specifier: ^0.184.0
         version: 0.184.0

@@ -5,6 +5,7 @@ export {SeededRng} from "./math/SeededRng";
 
 // Types
 export type {DroneId, DroneIdPair} from "./types/DroneId";
+export type {ObstacleId} from "./types/ObstacleId";
 export {idsToPair, pairToIds} from "./types/DroneId";
 export type {AlgorithmId} from "./types/AlgorithmId";
 export type {Message, IPayload} from "./types/Message";

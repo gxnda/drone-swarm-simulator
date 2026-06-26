@@ -128,6 +128,7 @@ export class World extends WorldView {
     });
     const serialisedObstacles: {
       type: "box";
+      id: string,
       min: [number, number, number];
       max: [number, number, number];
     }[] = [];

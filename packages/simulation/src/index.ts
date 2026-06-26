@@ -1,0 +1,1 @@
+export {Obstacle} from "./world/Obstacle"
