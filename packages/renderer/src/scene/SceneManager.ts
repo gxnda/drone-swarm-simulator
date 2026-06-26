@@ -25,7 +25,7 @@ export class SceneManager {
       60,
       canvas.width / canvas.height,
       0.1,
-      1000
+      2000
     )
     this.camera.position.set(0, 30, 80);
     this.camera.lookAt(new Vector3(0, 0, 0));
