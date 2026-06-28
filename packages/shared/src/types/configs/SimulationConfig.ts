@@ -6,6 +6,7 @@ import {SerialisedObstacle} from "../SerialisedObstacle";
 
 export interface SimulationConfig {
   readonly droneMaxSpeed: number;
+  readonly droneMinSpeed?: number;
   readonly droneMaxAccel: number; // max acceleration per tick
   readonly worldSize: Vector3;
   readonly dt?: number;

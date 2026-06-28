@@ -9,6 +9,7 @@ export class Drone {
   public acceleration: Vector3 = new Vector3(0, 0, 0);
 
   readonly maxSpeed: number | null = null;
+  readonly minSpeed: number | null = null;
   readonly maxAcceleration: number | null = null;
 
   public communicationRange: number;
@@ -19,13 +20,14 @@ export class Drone {
 
   private inbox: Message[];
 
-  constructor(id: DroneId, location: Vector3, range: number, maxSpeed?: number, maxAcceleration?: number) {
+  constructor(id: DroneId, location: Vector3, range: number, maxSpeed?: number, maxAcceleration?: number, minSpeed?: number) {
     this.id = id;
     this.location = location;
     this.communicationRange = range;
     this.orientation = new Quaternion();
 
     if (maxSpeed) this.maxSpeed = maxSpeed;
+    if (minSpeed) this.minSpeed = minSpeed;
     if (maxAcceleration) this.maxAcceleration = maxAcceleration;
 
     this.inbox = new Array<Message>();

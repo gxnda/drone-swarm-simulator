@@ -49,6 +49,7 @@ export class Engine {
           range,
           this.config.droneMaxSpeed,
           this.config.droneMaxAccel,
+          this.config.droneMinSpeed ?? undefined
         );
       drone.velocity = new Vector3(1,0,0)
       drones.push(drone)
@@ -108,6 +109,9 @@ export class Engine {
     drones.forEach((drone) => {
       const lastVelocity = drone.velocity.clone();
       let velocity = velocities.get(drone)!.clone();
+      if (drone.minSpeed && velocity.lengthSq() < drone.minSpeed ** 2) {
+        velocity = velocity.normalize().multiplyScalar(drone.minSpeed);
+      }
       if (drone.maxSpeed && velocity.lengthSq() > drone.maxSpeed ** 2) {
         velocity = velocity.normalize().multiplyScalar(drone.maxSpeed);
       }
