@@ -1,6 +1,6 @@
 import {
   AmbientLight,
-  DirectionalLight, Fog, Object3D,
+  DirectionalLight, Object3D,
   PerspectiveCamera,
   Scene, Vector3,
   WebGLRenderer
