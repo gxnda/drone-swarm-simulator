@@ -29,7 +29,7 @@ export class BoidAlgorithm implements ICoordinationAlgorithm {
 
     const cohesion = this.computeCohesion(drone, neighbours).multiplyScalar(this.config.cohesionWeight);
     const separation = this.computeSeparation(drone, neighbours).multiplyScalar(this.config.separationWeight);
-    const alignment = this.computeAlignment(neighbours).multiplyScalar(this.config.alignmentWeight);
+    const alignment = this.computeAlignment(drone, neighbours).multiplyScalar(this.config.alignmentWeight);
     return cohesion.add(separation).add(alignment);
   }
 
@@ -83,14 +83,14 @@ export class BoidAlgorithm implements ICoordinationAlgorithm {
         )
       }
     })
-    return separation.normalize();
+    return separation;
   }
 
-  private computeAlignment(neighbours: ReadonlyArray<Readonly<Drone>>): Vector3 {
+  private computeAlignment(drone: Readonly<Drone>, neighbours: ReadonlyArray<Readonly<Drone>>): Vector3 {
     return neighbours.reduce(
       (acc, drone) =>
         acc.add(drone.velocity), new Vector3(0, 0, 0)
-    ).divideScalar(neighbours.length).normalize();
+    ).divideScalar(neighbours.length).sub(drone.velocity);
   }
 
   // onDroneFailed(failedId: DroneId, survivors: ReadonlyArray<Drone>): void {
