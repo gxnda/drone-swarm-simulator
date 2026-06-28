@@ -19,7 +19,7 @@ const config: SimulationConfig = {
   seed: "test",
   spawnStrategy: {
     type: "random",
-    count: 10,
+    count: 20,
     boundMin: new Vector3(-100, -100, -100),
     boundMax: new Vector3(100, 100, 100),
   },
@@ -27,12 +27,10 @@ const config: SimulationConfig = {
     id: "boids" as AlgorithmId,
     name: "Boids",
     description: "Boids algorithm",
-    cohesionWeight: 0.5,
-    separationWeight: 7,
-    alignmentWeight: 1,
-    maxSpeed: 100,
-    maxAccel: 10,
-    communicationRange: 100,
+    cohesionWeight: 0.6,
+    separationWeight: 6,
+    alignmentWeight: 0.01,
+    communicationRange: 20,
     separationRange: 30
   } as BoidsConfig,
   networkConfig: {
@@ -42,11 +40,12 @@ const config: SimulationConfig = {
     },
     attenuationConfig: {
       type: "FreeSpaceConfig",
-      range: 20
+      range: 14
     }
   },
-  droneMaxSpeed: 5,
-  droneMaxAccel: 0.1,
+  droneMaxSpeed: 7,
+  droneMaxAccel: 0.005,
+  droneMinSpeed: 5,
   obstacles: [],
   worldSize: new Vector3(200, 200, 200)
 };
