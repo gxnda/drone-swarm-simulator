@@ -39,7 +39,7 @@ export class Drone {
     return this.orientation;
   }
 
-  private smoothUpdateRotation(target: Quaternion, current: Quaternion, dt: number = 1, turnSpeed: number = 3.0) {
+  private smoothUpdateRotation(target: Quaternion, current: Quaternion, dt: number = 1, turnSpeed: number = 0.1) {
     return current.slerp(target, Math.min(1, turnSpeed * dt))
   }
 
