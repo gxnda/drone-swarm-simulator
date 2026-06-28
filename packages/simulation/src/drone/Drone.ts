@@ -8,9 +8,9 @@ export class Drone {
   public velocity: Vector3 = new Vector3(0, 0, 0);
   public acceleration: Vector3 = new Vector3(0, 0, 0);
 
-  readonly maxSpeed: number | null = null;
-  readonly minSpeed: number | null = null;
-  readonly maxAcceleration: number | null = null;
+  public maxSpeed: number | null = null;
+  public minSpeed: number | null = null;
+  public  maxAcceleration: number | null = null;
 
   public communicationRange: number;
 
