@@ -12,8 +12,8 @@ import {
 import {RenderPipeline} from "@drone-swarm/renderer";
 
 const config: SimulationConfig = {
-  boundsMax: new Vector3(100, 100, 100),
-  boundsMin: new Vector3(-100, -100, -100),
+  boundsMax: new Vector3(300, 300, 300),
+  boundsMin: new Vector3(-300, -300, -300),
   chunkSize: 10,
   preferredBoundaryBehaviour: BoundaryBehaviour.REFLECT,
   seed: "test",
@@ -27,13 +27,13 @@ const config: SimulationConfig = {
     id: "boids" as AlgorithmId,
     name: "Boids",
     description: "Boids algorithm",
-    cohesionWeight: 0.6,
-    separationWeight: 1,
+    cohesionWeight: 0.5,
+    separationWeight: 7,
     alignmentWeight: 1,
-    maxSpeed: 50,
+    maxSpeed: 100,
     maxAccel: 10,
     communicationRange: 100,
-    separationRange: 2
+    separationRange: 30
   } as BoidsConfig,
   networkConfig: {
     latencyConfig: {
@@ -46,7 +46,7 @@ const config: SimulationConfig = {
     }
   },
   droneMaxSpeed: 5,
-  droneMaxAccel: 1,
+  droneMaxAccel: 0.1,
   obstacles: [],
   worldSize: new Vector3(200, 200, 200)
 };
@@ -55,13 +55,11 @@ const config: SimulationConfig = {
 const engine = new Engine(config);
 engine.start();
 
-console.log(1);
 const canvas = document.createElement("canvas");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 document.body.appendChild(canvas);
 
-console.log(2);
 const pipeline = await RenderPipeline.create(canvas, config);
 
 function animate() {
@@ -72,7 +70,6 @@ function animate() {
 
   // Update scene
   pipeline.update(snapshot);
-  console.log(snapshot.world.droneSnapshots)
 
   // Render
   pipeline.render();
