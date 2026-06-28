@@ -31,6 +31,19 @@ export class SpatialHash<Type extends SpatialEntity> {
         this._items.add(item);
     }
 
+    public removeItem(item: Type) {
+        this._items.delete(item);
+        this.chunks.forEach((chunk => {
+            chunk.forEach((values, key) => {
+                const filtered = values.filter(v => v !== item);
+                if (filtered.length !== values.length) {
+                    chunk.set(key, filtered);
+                    return;
+                }
+            });
+        }));
+    }
+
     private static ChunkCoordToVector3(coords: string): Vector3 {
         const firstThree = coords.split(" ").slice(0, 3);
         return new Vector3(...firstThree.map(parseFloat));
