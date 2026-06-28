@@ -30,4 +30,12 @@ export class DroneGeometry {
     })
     return geometries;
   }
+
+  public static async loadPaperPlane() {
+    const gltf = await DroneGeometry.load(DroneModelPaths.paper_plane);
+    const geometry = DroneGeometry.getGeometriesFrom(gltf)[0]!;
+    geometry.rotateX(Math.PI / 2);
+
+    return geometry
+  }
 }
