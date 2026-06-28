@@ -9,13 +9,14 @@ import {
 } from "@drone-swarm/shared";
 import {
   Box3,
-  BufferGeometry, ConeGeometry,
+  BufferGeometry,
   MeshBasicMaterial,
   Raycaster, Vector2,
   Vector3
 } from "three";
 import {Obstacle} from "@drone-swarm/shared";
 import {CameraMode} from "./CameraController";
+import {DroneGeometry} from "../objects/DroneGeometry";
 
 export class RenderPipeline {
   private sceneManager: SceneManager;
@@ -35,9 +36,10 @@ export class RenderPipeline {
 
   private constructor(canvas: HTMLCanvasElement, geometry: BufferGeometry, config: SimulationConfig) {
     this.sceneManager = new SceneManager(canvas);
+    const material = new MeshBasicMaterial({color: 0xffffff});
     this.droneMesh = new DroneInstancedMesh(
       geometry,
-      new MeshBasicMaterial({color: 0xffffff, vertexColors: true}),
+      material,
       1000,
     )
     this.sceneManager.add(this.droneMesh.mesh);
@@ -54,9 +56,8 @@ export class RenderPipeline {
   }
 
   static async create(canvas: HTMLCanvasElement, config: SimulationConfig): Promise<RenderPipeline> {
-    // const gltf = await DroneGeometry.load(DroneModelPaths.paper_plane);
-    // const geometry = DroneGeometry.getGeometriesFrom(gltf)[0]!;
-    const geometry = new ConeGeometry(5, 10, 4);
+    const geometry = await DroneGeometry.loadPaperPlane();
+    // const geometry = new ConeGeometry(5, 10, 4);
     return new RenderPipeline(canvas, geometry, config);
   }
 

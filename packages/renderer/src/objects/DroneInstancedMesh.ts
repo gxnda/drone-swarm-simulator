@@ -2,7 +2,7 @@
 
 import {
   BufferGeometry, Color,
-  DynamicDrawUsage,
+  DynamicDrawUsage, InstancedBufferAttribute,
   InstancedMesh,
   Material,
   Matrix4,
@@ -23,6 +23,7 @@ export class DroneInstancedMesh {
   private colourMapper: DroneColourMapper = new DroneColourMapper();
   private dummy: Object3D = new Object3D();
   private readonly zeroMatrix: Matrix4 = new Matrix4();
+  private material: Material;
 
   public get selected(): DroneId | null {
     return this._selected;
@@ -40,10 +41,10 @@ export class DroneInstancedMesh {
       0, 0, 0, 0
     );
 
+    this.material = material.clone();
     this.capacity = capacity;
-
-    material.vertexColors = true;
-    this.mesh = new InstancedMesh(geometry, material, capacity);
+    // this.material.vertexColors = true;
+    this.mesh = new InstancedMesh(geometry, this.material, capacity);
 
     if (scale) {
       this.dummy.scale.copy(scale);
@@ -77,11 +78,23 @@ export class DroneInstancedMesh {
   }
 
   private setInstanceColour(index: number, state: DroneState = DroneState.ACTIVE, isSelected: boolean = false): void {
-    if (isSelected) {
-      this.mesh.setColorAt(index, this.colourMapper.colourForSelection())
-    } else {
-      this.mesh.setColorAt(index, this.colourMapper.colourFor(state))
+
+    const attrName = 'instanceColor';
+    let attr = this.mesh.geometry.getAttribute(attrName) as InstancedBufferAttribute | null;
+    if (!attr) {
+      attr = new InstancedBufferAttribute(new Float32Array(this.capacity * 3), 3);
+      attr.setUsage(DynamicDrawUsage);
+      this.mesh.geometry.setAttribute(attrName, attr as never);
     }
+
+    let colour: Color;
+    if (isSelected) {
+      colour = this.colourMapper.colourForSelection();
+    } else {
+      colour = this.colourMapper.colourFor(state);
+    }
+    attr.setXYZ(index, colour.r, colour.g, colour.b);
+    attr.needsUpdate = true;
   }
 
   private setPositionAndOrientationAt(index: number, position: Vector3Like, orientation: Quaternion) {
