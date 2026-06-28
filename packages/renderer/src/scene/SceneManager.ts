@@ -13,7 +13,7 @@ export class SceneManager {
   public renderer: WebGLRenderer;
   public cameraController: CameraController;
   public lights: {ambient: AmbientLight, directional: DirectionalLight};
-  public fog: Fog | null = null;
+  // public fog: Fog | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.renderer = new WebGLRenderer({canvas, antialias: true});
