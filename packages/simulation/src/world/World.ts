@@ -89,6 +89,37 @@ export class World extends WorldView {
     }
   }
 
+  public updateFromConfig(config: SimulationConfig) {
+    this.size = config.worldSize;
+    this.bounds = new Bounds(config.boundsMin, config.boundsMax, config.preferredBoundaryBehaviour);
+    const items = this.obstacleHash.items;
+    this.obstacleHash = new SpatialHash<Obstacle>(config.chunkSize);
+    this.obstacleHash.addMany(items);
+    this.dt = config.dt ?? this.dt;
+
+    this.droneIdMap.values().forEach(drone => {
+      drone.minSpeed = config.droneMinSpeed ?? drone.minSpeed;
+      drone.maxSpeed = config.droneMaxSpeed ?? drone.maxSpeed;
+      drone.maxAcceleration = config.droneMaxAccel ?? drone.maxAcceleration;
+      drone.communicationRange = config.algorithmConfig.communicationRange ?? drone.communicationRange;
+    })
+  }
+
+  public removeObstacle(oId: ObstacleId): void {
+    let toRemove: Obstacle | null = null;
+    this.obstacleHash.items.forEach(obstacle => {
+      if (obstacle.id === oId) {
+        toRemove = obstacle;
+      }
+    })
+    if (toRemove === null) {
+      console.warn(`Obstacle with ID ${oId} not found`);
+      return;
+    } else {
+      this.obstacleHash.removeItem(toRemove);
+    }
+  }
+
   public getActiveDrones(): Drone[] {
     return new Array(...this.droneHash.items).filter(drone => drone.isActive());
   }
