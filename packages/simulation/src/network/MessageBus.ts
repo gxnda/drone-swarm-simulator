@@ -27,6 +27,10 @@ export class MessageBus {
     }
   }
 
+  public clear() {
+    this.queue.clear();
+  }
+
   public popMessagesToBeDelivered(currentTick: number): Map<DroneId, Message[]> {
     const messages = this.queue.get(currentTick) ?? [];
     this.queue.delete(currentTick);

@@ -30,5 +30,5 @@ export type {
 } from "./types/configs/NetworkConfig";
 
 // Other
-export {Constants} from "./constants";
+export {Constants, DEFAULT_CONFIG} from "./constants";
 export {Obstacle} from "./types/Obstacle";

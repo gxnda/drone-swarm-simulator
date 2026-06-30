@@ -66,6 +66,24 @@ export class RenderPipeline {
     this.sceneManager.addMany(this.obstacleRenderer.getAllMeshes());
   }
 
+  public selectDrone(id: DroneId | null): void {
+    this.droneMesh.setSelected(id);
+  }
+
+  public setConfig(config: SimulationConfig) {
+    this.sceneManager.remove(this.boundsRenderer.wireframe);
+    this.boundsRenderer.dispose()
+    this.boundsRenderer = new BoundsRenderer(new Box3(config.boundsMin, config.boundsMax));
+    this.sceneManager.add(this.boundsRenderer.wireframe);
+
+    this.obstacleRenderer.getAllMeshes().forEach(mesh => {
+      this.sceneManager.remove(mesh);
+    });
+    this.obstacleRenderer.dispose()
+    this.obstacleRenderer.add(config.obstacles.map((o) => Obstacle.deserialise(o)));
+    this.sceneManager.addMany(this.obstacleRenderer.getAllMeshes());
+  }
+
   public update(snapshot: EngineSnapshot) {
     this.edgeBuffer.length = 0;
     this.locationBuffer.clear();
@@ -109,6 +127,14 @@ export class RenderPipeline {
     this.lastFrameTime = now;
     this.sceneManager.cameraController.update(dt);
     this.sceneManager.render();
+  }
+
+  public dispose(): void {
+    this.sceneManager.dispose();
+    this.droneMesh.dispose();
+    this.boundsRenderer.dispose();
+    this.obstacleRenderer.dispose();
+    this.networkRenderer.dispose();
   }
 
 }

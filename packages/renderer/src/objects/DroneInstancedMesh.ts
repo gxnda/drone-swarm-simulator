@@ -23,7 +23,7 @@ export class DroneInstancedMesh {
   private colourMapper: DroneColourMapper = new DroneColourMapper();
   private dummy: Object3D = new Object3D();
   private readonly zeroMatrix: Matrix4 = new Matrix4();
-  private material: Material;
+  private readonly material: Material;
 
   public get selected(): DroneId | null {
     return this._selected;
@@ -98,8 +98,19 @@ export class DroneInstancedMesh {
   }
 
   private setPositionAndOrientationAt(index: number, position: Vector3Like, orientation: Quaternion) {
+    const isInvalid = !orientation ||
+      isNaN(orientation.x) || isNaN(orientation.y) || isNaN(orientation.z) || isNaN(orientation.w) ||
+      Math.abs(orientation.length() - 1) > 0.001;
+
+    if (isInvalid) {
+      console.warn(`Invalid quaternion for drone at index ${index}, using identity.`);
+      this.dummy.quaternion.identity();
+    } else {
+      this.dummy.quaternion.copy(orientation);
+    }
+
     this.dummy.position.copy(position);
-    this.dummy.setRotationFromQuaternion(orientation);
+    // this.dummy.setRotationFromQuaternion(orientation);
     this.dummy.updateMatrix();
     this.mesh.setMatrixAt(index, this.dummy.matrix);
   }
@@ -133,10 +144,14 @@ export class DroneInstancedMesh {
       }
     });
 
+    console.log(`[DroneInstancedMesh] After update - mesh.count: ${this.mesh.count}, mesh.visible: ${this.mesh.visible}`);
+
     this.mesh.instanceMatrix.needsUpdate = true;
     if (this.mesh.instanceColor) {
       this.mesh.instanceColor.needsUpdate = true;
     }
+    this.mesh.computeBoundingBox();
+    this.mesh.computeBoundingSphere();
   }
 
   public dispose(): void {

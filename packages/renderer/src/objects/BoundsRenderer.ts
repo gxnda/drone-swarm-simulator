@@ -4,6 +4,7 @@ import {
   LineSegments,
   Vector3,
 } from "three";
+import {disposeObject3D} from "../utils/disposer";
 
 export class BoundsRenderer {
   public wireframe: LineSegments;
@@ -28,5 +29,9 @@ export class BoundsRenderer {
     this.box.getCenter(centre);
     this.wireframe = new LineSegments(new EdgesGeometry(new BoxGeometry(box.max.x - box.min.x, box.max.y - box.min.y, box.max.z - box.min.z)));
     this.wireframe.position.copy(centre);
+  }
+
+  dispose() {
+    disposeObject3D(this.wireframe);
   }
 }

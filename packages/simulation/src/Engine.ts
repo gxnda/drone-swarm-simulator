@@ -1,10 +1,10 @@
 import {World, WorldView} from "./world/World";
 import {NetworkTopology} from "./network/NetworkTopology";
 import {
-  DroneId, DroneState, WorldSnapshot, Message,
+  DroneId, DroneState, Message,
   SeededRng,
   SimulationConfig,
-  SpawnStrategy, EngineSnapshot
+  SpawnStrategy, EngineSnapshot, AlgorithmConfig
 } from "@drone-swarm/shared";
 import {DroneFactory} from "./drone/DroneFactory";
 import {Vector3} from "three";
@@ -15,10 +15,10 @@ import {MessageBus} from "./network/MessageBus";
 
 export class Engine {
   readonly world: World;
-  private readonly config: SimulationConfig;
+  private config: SimulationConfig;
   private topology: NetworkTopology;
   private readonly rng: SeededRng;
-  private readonly algorithm: ICoordinationAlgorithm
+  private algorithm: ICoordinationAlgorithm
   private messageBus: MessageBus;
   // private readonly metrics: Something???
 
@@ -37,6 +37,36 @@ export class Engine {
     );
     this.algorithm = AlgorithmFactory.fromConfig(config.algorithmConfig);
     this.messageBus = new MessageBus(new Map());
+  }
+
+  public getAlgorithm(): string {
+    return this.algorithm.name;
+  }
+
+  public setAlgorithm(algorithm: ICoordinationAlgorithm): void {
+    this.algorithm = algorithm;
+  }
+
+  public setAlgorithmFromConfig(algorithmConfig: AlgorithmConfig): void {
+    this.algorithm = AlgorithmFactory.fromConfig(algorithmConfig);
+  }
+
+  public updateFromConfig(config: SimulationConfig) {
+    this.config = config;
+    this.world.updateFromConfig(config);
+    this.topology = NetworkTopology.fromConfig(
+      new Set<Drone>(this.world.getDrones()),
+      this.rng,
+      config.networkConfig
+    );
+    this.setAlgorithmFromConfig(config.algorithmConfig);
+    this.messageBus.clear();
+  }
+
+  public kill(id: DroneId) {
+    const drone = this.world.droneIdMap.get(id);
+    if (!drone) throw new Error("Drone doesn't exist");
+    drone.setState(DroneState.FAILED);
   }
 
   private createDrones(strategy: SpawnStrategy, range: number): Drone[] {

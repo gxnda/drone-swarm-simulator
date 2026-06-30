@@ -62,4 +62,14 @@ export class SceneManager {
   public render(): void {
     this.renderer.render(this.scene, this.camera);
   }
+
+  public dispose(): void {
+    this.scene.remove(this.camera);
+    this.scene.remove(this.lights.ambient);
+    this.scene.remove(this.lights.directional);
+    this.cameraController.dispose();
+    this.lights.directional.dispose();
+    this.lights.ambient.dispose();
+    this.renderer.dispose();
+  }
 }
