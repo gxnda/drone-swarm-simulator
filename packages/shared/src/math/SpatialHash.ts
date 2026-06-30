@@ -147,8 +147,10 @@ export class SpatialHash<Type extends SpatialEntity> {
         return this.items.size
     }
 
-    public addMany(items: Type[]): number {
-        items.forEach((item) => this.addItem(item));
+    public addMany(items: Iterable<Type>): number {
+        for (const item of items) {
+            this.addItem(item);
+        }
         return this.items.size;
     }
 
