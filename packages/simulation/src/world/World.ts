@@ -2,8 +2,12 @@ import {Vector3} from "three";
 import {
   AlgorithmConfig,
   DroneId,
-  DroneSnapshot, NetworkConfig, SimulationConfig,
-  SpatialHash, SpawnStrategy,
+  DroneSnapshot,
+  NetworkConfig,
+  ObstacleId,
+  SimulationConfig,
+  SpatialHash,
+  SpawnStrategy,
   WorldSnapshot
 } from "@drone-swarm/shared";
 import {Drone} from "../drone/Drone";
