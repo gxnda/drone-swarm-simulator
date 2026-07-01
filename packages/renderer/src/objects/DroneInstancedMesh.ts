@@ -148,8 +148,6 @@ export class DroneInstancedMesh {
       }
     });
 
-    console.log(`[DroneInstancedMesh] After update - mesh.count: ${this.mesh.count}, mesh.visible: ${this.mesh.visible}`);
-
     this.mesh.instanceMatrix.needsUpdate = true;
     if (this.mesh.instanceColor) {
       this.mesh.instanceColor.needsUpdate = true;
