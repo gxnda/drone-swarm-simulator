@@ -104,6 +104,8 @@ export class DroneInstancedMesh {
 
     if (isInvalid) {
       console.warn(`Invalid quaternion for drone at index ${index}, using identity.`);
+      console.debug(`isQuaternion: ${orientation.isQuaternion}`);
+      console.debug(`${orientation.x}-x, ${orientation.y}-y, ${orientation.z}-z, ${orientation.w}-w`);
       this.dummy.quaternion.identity();
     } else {
       this.dummy.quaternion.copy(orientation);
@@ -121,7 +123,9 @@ export class DroneInstancedMesh {
       throw new Error(`DroneInstancedMesh capacity exceeded: ${this.capacity}`);
     }
 
-    this.setPositionAndOrientationAt(index, drone.location, drone.orientation);
+    const orientation: Quaternion = new Quaternion(...drone.orientation);
+
+    this.setPositionAndOrientationAt(index, drone.location, orientation);
     this.setInstanceColour(index, drone.state as DroneState, drone.id === this.selected)
     this.indexToId.set(index, drone.id);
     this.idToIndex.set(drone.id, index);
@@ -130,7 +134,7 @@ export class DroneInstancedMesh {
 
   private updateExisting(drone: DroneSnapshot): void {
     const index = this.idToIndex.get(drone.id)!;
-    this.setPositionAndOrientationAt(index, drone.location, drone.orientation);
+    this.setPositionAndOrientationAt(index, drone.location, new Quaternion(...drone.orientation));
     this.setInstanceColour(index, drone.state as DroneState, drone.id === this.selected)
   }
 

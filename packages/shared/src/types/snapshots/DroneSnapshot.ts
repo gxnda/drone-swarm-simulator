@@ -5,7 +5,7 @@ import {ISnapshot} from "./ISnapshot";
 export class DroneSnapshot extends ISnapshot {
     public id: DroneId;
     public location: Vector3;
-    public orientation: Quaternion;
+    public orientation: [number, number, number, number];
     public velocity: Vector3;
     public range: number;
     public state: string;
@@ -14,7 +14,7 @@ export class DroneSnapshot extends ISnapshot {
         super()
         this.id = id;
         this.location = location.clone();
-        this.orientation = orientation.clone();
+        this.orientation = orientation.clone().toJSON();
         this.velocity = velocity.clone();
         this.state = state;
         this.range = range
