@@ -1,6 +1,7 @@
 import {Drone} from "../../../drone/Drone";
 import {LogDistanceConfig, SeededRng} from "@drone-swarm/shared";
 import {IAttenuationModel} from "./IAttenuationModel";
+import {Vector3} from "three";
 
 
 export class LogDistanceModel implements IAttenuationModel {
@@ -9,7 +10,13 @@ export class LogDistanceModel implements IAttenuationModel {
   }
 
   public getDropProbability(a: Drone, b: Drone, rng: SeededRng): {dropProbability: number} | null {
-    const distance = a.location.distanceTo(b.location);
+    return this.getDropProbabilityAtLocation(a.location, b.location, rng);
+  }
+
+  public getDropProbabilityAtLocation(a: Vector3, b: Vector3, rng: SeededRng): {
+    dropProbability: number
+  } | null {
+    const distance = a.distanceTo(b);
     if (distance > this.config.maxRange) return null;
     // https://en.wikipedia.org/wiki/Log-distance_path_loss_model
     const pathLoss =
