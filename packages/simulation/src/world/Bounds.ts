@@ -34,6 +34,17 @@ export class Bounds {
     }
   }
 
+  public* iterate(step: number = 1) {
+    for (let x = this.min.x; x < this.max.x; x += step) {
+      for (let y = this.min.y; y < this.max.y; y += step) {
+        for (let z = this.min.z; z < this.max.z; z += step) {
+          yield new Vector3(x, y, z);
+        }
+      }
+    }
+    return;
+  }
+
   public contains(p: Vector3) {
     return this.box.containsPoint(p)
   }
