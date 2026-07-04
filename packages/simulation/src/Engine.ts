@@ -39,6 +39,14 @@ export class Engine {
     this.messageBus = new MessageBus(new Map());
   }
 
+  public getTopology(): NetworkTopology {
+    return this.topology;
+  }
+
+  public getMessageBus(): MessageBus {
+    return this.messageBus;
+  }
+
   public getAlgorithm(): string {
     return this.algorithm.name;
   }
