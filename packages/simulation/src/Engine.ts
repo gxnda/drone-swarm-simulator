@@ -12,6 +12,7 @@ import {Drone} from "./drone/Drone";
 import {ICoordinationAlgorithm} from "./algorithms/ICoordinationAlgorithm";
 import {AlgorithmFactory} from "./algorithms/AlgorithmFactory";
 import {MessageBus} from "./network/MessageBus";
+import {MetricsCollector} from "./metrics/MetricsCollector";
 
 export class Engine {
   readonly world: World;
@@ -20,7 +21,7 @@ export class Engine {
   private readonly rng: SeededRng;
   private algorithm: ICoordinationAlgorithm
   private messageBus: MessageBus;
-  // private readonly metrics: Something???
+  private readonly metrics: MetricsCollector;
 
   private running: boolean;
 
@@ -37,6 +38,9 @@ export class Engine {
     );
     this.algorithm = AlgorithmFactory.fromConfig(config.algorithmConfig);
     this.messageBus = new MessageBus(new Map());
+
+    this.metrics = new MetricsCollector();
+    this.metrics.registerAll();
   }
 
   public getTopology(): NetworkTopology {
@@ -199,8 +203,8 @@ export class Engine {
     drones.forEach((drone) => drone.clearInbox())
   }
 
-  private getMetrics(_drones: ReadonlySet<Drone>) {
-    // TODO
+  private getMetrics() {
+    this.metrics.compute(this);
   }
 
   public step(): EngineSnapshot {
@@ -221,7 +225,7 @@ export class Engine {
     this.updateDroneOrientations(drones);
     this.clearInboxes(drones);
 
-    this.getMetrics(drones);
+    this.getMetrics();
 
     this.world.incrementTime();
 

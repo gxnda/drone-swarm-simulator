@@ -25,12 +25,12 @@ export const DEFAULT_CONFIG: SimulationConfig = {
     id: "boids" as AlgorithmId,
     name: "Boids",
     description: "Boids algorithm",
-    cohesionWeight: 0.5,
-    separationWeight: 0.5,
-    alignmentWeight: 0.5,
+    cohesionWeight: 0.3,
+    separationWeight: 2,
+    alignmentWeight: 3,
     maxSpeed: 5,
-    maxAccel: 1,
-    communicationRange: 10,
+    maxAccel: 0.0001,
+    communicationRange: 5,
     separationRange: 3
   } as BoidsConfig,
   networkConfig: {
@@ -40,7 +40,7 @@ export const DEFAULT_CONFIG: SimulationConfig = {
     },
     attenuationConfig: {
       type: "FreeSpaceConfig",
-      range: 20
+      range: 10
     }
   },
   obstacles: [],

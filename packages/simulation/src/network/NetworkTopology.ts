@@ -3,7 +3,7 @@ import {
   DroneIdPair,
   idsToPair,
   LinkQuality, NetworkConfig,
-  SeededRng, TopologySnapshot
+  SeededRng, SpatialHash, TopologySnapshot
 } from "@drone-swarm/shared";
 import {Drone} from "../drone/Drone";
 import {IAttenuationModel} from "./models/attenuation/IAttenuationModel";
@@ -12,6 +12,7 @@ import {
   AttenuationModelFactory,
   LatencyModelFactory
 } from "./models/ModelFactory";
+import {Vector3} from "three";
 
 export class NetworkTopology {
   private adjacency: Map<DroneId, Set<DroneId>> = new Map();
@@ -223,5 +224,22 @@ export class NetworkTopology {
 
   public snapshot(): TopologySnapshot {
     return new TopologySnapshot(this.adjacency, this.qualities);
+  }
+
+  public getMaxAttenuationAt(point: Vector3, hash: SpatialHash<Drone>) {
+    if (!this.attenuationModel.getDropProbabilityAtLocation) {
+      return 0;
+    }
+    let maxAttenuation = 0;
+    let attenuation: number | null = null;
+    hash.neighbouringCoord(point).forEach((drone) => {
+      attenuation = this.attenuationModel
+        .getDropProbabilityAtLocation?.(drone.location, point, this.rng)
+        ?.dropProbability ?? null;
+      if (attenuation !== null) {
+        maxAttenuation = Math.max(maxAttenuation, attenuation);
+      }
+    });
+    return maxAttenuation;
   }
 }

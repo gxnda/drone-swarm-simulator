@@ -1,5 +1,5 @@
-import {DroneId, LinkQuality, Message, SeededRng} from "@drone-swarm/shared";
-import {Drone} from "../drone/Drone";
+import { DroneId, LinkQuality, Message, SeededRng } from "@drone-swarm/shared";
+import { Drone } from "../drone/Drone";
 
 /**
  * The ether that messages get sent across
@@ -8,7 +8,22 @@ import {Drone} from "../drone/Drone";
  * randomly disappear
  */
 export class MessageBus {
-  constructor(private readonly queue: Map<number, Message[]>) {}
+  private currentTick: number = 0;
+  private _totalSentThisTick: number = 0;
+
+  constructor(private readonly queue: Map<number, Message[]>) { }
+
+  public getTotalSentThisTick() {
+    return this._totalSentThisTick;
+  }
+
+  private incrMetric(tick: number) {
+    if (tick !== this.currentTick) {
+      this.currentTick = tick;
+      this._totalSentThisTick = 0
+    }
+    this._totalSentThisTick += 1;
+  }
 
   public send(
     message: Message,
@@ -16,6 +31,7 @@ export class MessageBus {
     linkQuality: LinkQuality,
     rng: SeededRng
   ): void {
+    this.incrMetric(currentTick);
     // drop it randomly
     if (rng.float(0, 1) < linkQuality.dropProbability) return;
 
