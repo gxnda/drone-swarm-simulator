@@ -2,9 +2,9 @@ import {
   BoundaryBehaviour,
   SimulationConfig
 } from "./types/configs/SimulationConfig";
-import {Vector3} from "three";
-import {AlgorithmId} from "./types/AlgorithmId";
-import {BoidsConfig} from "./types/configs/AlgorithmConfig";
+import { Vector3 } from "three";
+import { AlgorithmId } from "./types/AlgorithmId";
+import { BoidsConfig } from "./types/configs/AlgorithmConfig";
 
 export enum Constants {
 }
@@ -22,16 +22,12 @@ export const DEFAULT_CONFIG: SimulationConfig = {
     boundMax: new Vector3(100, 100, 100),
   },
   algorithmConfig: {
+    communicationRange: 10,
     id: "boids" as AlgorithmId,
-    name: "Boids",
-    description: "Boids algorithm",
-    cohesionWeight: 0.3,
-    separationWeight: 2,
-    alignmentWeight: 3,
-    maxSpeed: 5,
-    maxAccel: 0.0001,
-    communicationRange: 5,
-    separationRange: 3
+    separationWeight: 4,
+    alignmentWeight: 1,
+    cohesionWeight: 0.5,
+    separationRange: 5
   } as BoidsConfig,
   networkConfig: {
     latencyConfig: {
@@ -44,7 +40,10 @@ export const DEFAULT_CONFIG: SimulationConfig = {
     }
   },
   obstacles: [],
-  droneMaxSpeed: 5,
+  droneMaxSpeed: 1,
+  droneMinSpeed: 1,
   droneMaxAccel: 1,
+  droneMaxAngularAccel: 1,
+  droneCommunicationRange: 6,
   worldSize: new Vector3(200, 200, 200)
-};
+} as SimulationConfig;

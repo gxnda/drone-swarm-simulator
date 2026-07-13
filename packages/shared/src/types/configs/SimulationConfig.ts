@@ -8,6 +8,7 @@ export interface SimulationConfig {
   readonly droneMaxSpeed: number;
   readonly droneMinSpeed?: number;
   readonly droneMaxAccel: number; // max acceleration per tick
+  readonly droneMaxAngularAccel?: number;
   readonly worldSize: Vector3;
   readonly dt?: number;
   readonly chunkSize: number;

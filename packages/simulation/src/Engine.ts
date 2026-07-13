@@ -91,7 +91,8 @@ export class Engine {
           range,
           this.config.droneMaxSpeed,
           this.config.droneMaxAccel,
-          this.config.droneMinSpeed ?? undefined
+          this.config.droneMinSpeed,
+          this.config.droneMaxAngularAccel
         );
       drone.velocity = new Vector3(1,0,0)
       drones.push(drone)
@@ -161,6 +162,29 @@ export class Engine {
       if (drone.maxAcceleration && accel.lengthSq() > drone.maxAcceleration ** 2) {
         accel = accel.normalize().multiplyScalar(drone.maxAcceleration);
         velocity = lastVelocity.clone().add(accel);
+      }
+      // https://math.stackexchange.com/questions/1805810/clamp-angle-between-two-vectors
+      if (drone.maxAngularAcceleration && lastVelocity.angleTo(velocity) > drone.maxAngularAcceleration) {
+        const currentSpeed = velocity.length();
+
+        const currentHeading = lastVelocity.clone().normalize();
+        const targetHeading = velocity.clone().normalize();
+        const cosBeta = currentHeading.dot(targetHeading);
+        const cosMax = Math.cos(drone.maxAngularAcceleration);
+
+        if (cosBeta < -0.9999) { //
+          const up = new Vector3(0, 0, 1);
+          if (Math.abs(currentHeading.dot(up)) > 0.99) up.set(1, 0, 0);
+          const axis = new Vector3().crossVectors(currentHeading, up).normalize();
+          velocity.copy(currentHeading.clone().applyAxisAngle(axis, drone.maxAngularAcceleration));
+        } else {
+          const perpendicular = targetHeading.clone().sub(currentHeading.clone().multiplyScalar(cosBeta));
+          velocity.copy(
+            currentHeading.clone().multiplyScalar(cosMax)
+              .add(perpendicular.clone().normalize().multiplyScalar(Math.sin(drone.maxAngularAcceleration)))
+              .multiplyScalar(currentSpeed)
+          );
+        }
       }
       drone.velocity = velocity.clone();
       drone.acceleration = accel;

@@ -10,17 +10,17 @@ export class Drone {
 
   public maxSpeed: number | null = null;
   public minSpeed: number | null = null;
-  public  maxAcceleration: number | null = null;
+  public maxAcceleration: number | null = null;
+  public maxAngularAcceleration: number | null = null;
 
   public communicationRange: number;
 
   private state: DroneState = DroneState.ACTIVE;
   private failedAtTick: number | null = null;
   private becameIsolatedAtTick: number | null = null;
-
   private inbox: Message[];
 
-  constructor(id: DroneId, location: Vector3, range: number, maxSpeed?: number, maxAcceleration?: number, minSpeed?: number) {
+  constructor(id: DroneId, location: Vector3, range: number, maxSpeed?: number, maxAcceleration?: number, minSpeed?: number, maxAngularAcceleration?: number) {
     this.id = id;
     this.location = location;
     this.communicationRange = range;
@@ -29,6 +29,7 @@ export class Drone {
     if (maxSpeed) this.maxSpeed = maxSpeed;
     if (minSpeed) this.minSpeed = minSpeed;
     if (maxAcceleration) this.maxAcceleration = maxAcceleration;
+    if (maxAngularAcceleration) this.maxAngularAcceleration = maxAngularAcceleration;
 
     this.inbox = new Array<Message>();
   }

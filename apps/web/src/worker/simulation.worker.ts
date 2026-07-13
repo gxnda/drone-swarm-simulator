@@ -55,7 +55,6 @@ export class SimulationWorker {
   }
 
   public handleStart(start: StartCommand): WorkerMessage {
-    console.log("Starting");
     if (this.isRunning) {
       console.debug("Already Running!");
       return "ERROR"

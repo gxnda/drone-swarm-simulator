@@ -7,6 +7,7 @@ import {IMetric} from "./IMetric";
 import {Engine} from "../Engine";
 
 /**
+ * INFO: Likely obsolete, not a massively useful metric
  * What fraction of the world is covered by the drone ranges
  */
 export class CoverageMetric implements IMetric {
@@ -16,6 +17,7 @@ export class CoverageMetric implements IMetric {
   public stats: number[] = [];
 
   public compute(engine: Engine): number {
+    // TODO: Make efficient
     /**
      * There are a few ways to do this:
      * - Brute force against integers in the bounds of the world
