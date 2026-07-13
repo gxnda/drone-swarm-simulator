@@ -17,6 +17,10 @@ export class MessageBus {
     return this._totalSentThisTick;
   }
 
+  public getMessagesAtCurrentTick() {
+    return this.queue.get(this.currentTick);
+  }
+
   private incrSentThisTick(tick: number) {
     if (tick !== this.currentTick) {
       this.currentTick = tick;

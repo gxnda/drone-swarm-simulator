@@ -5,7 +5,7 @@ import {IMetric} from "./IMetric";
 import {Engine} from "../Engine";
 
 
-export class MessageComplexityMetric implements IMetric {
+export class MessageFrequencyMetric implements IMetric {
   public readonly name: string = "MessageComplexity";
   public readonly description: string = "Total messages sent per tick"
   public stats: number[] = [];

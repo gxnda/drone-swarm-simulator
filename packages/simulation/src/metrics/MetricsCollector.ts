@@ -2,9 +2,9 @@ import {IMetric} from "./IMetric";
 import {Engine} from "../Engine";
 import {CohesionMetric} from "./CohesionMetric";
 import {ConvergenceMetric} from "./ConvergenceMetric";
-import {CoverageMetric} from "./CoverageMetric";
-import {MessageComplexityMetric} from "./MessageComplexityMetric";
+import {MessageFrequencyMetric} from "./MessageFrequencyMetric";
 import {PartitionMetric} from "./PartitionMetric";
+import {MessageSizeMetric} from "./MessageSizeMetric";
 
 export class MetricsCollector {
   private readonly metrics: Set<IMetric> = new Set();
@@ -16,9 +16,10 @@ export class MetricsCollector {
   public registerAll() {
     this.register(new CohesionMetric());
     this.register(new ConvergenceMetric());
-    this.register(new CoverageMetric());
-    this.register(new MessageComplexityMetric());
+    this.register(new MessageFrequencyMetric());
+    this.register(new MessageSizeMetric());
     this.register(new PartitionMetric());
+    // this.register(new CoverageMetric());
     // this.register(new FaultToleranceMetric());
   }
 
