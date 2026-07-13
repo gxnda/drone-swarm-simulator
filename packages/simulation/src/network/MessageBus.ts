@@ -17,7 +17,7 @@ export class MessageBus {
     return this._totalSentThisTick;
   }
 
-  private incrMetric(tick: number) {
+  private incrSentThisTick(tick: number) {
     if (tick !== this.currentTick) {
       this.currentTick = tick;
       this._totalSentThisTick = 0
@@ -31,7 +31,7 @@ export class MessageBus {
     linkQuality: LinkQuality,
     rng: SeededRng
   ): void {
-    this.incrMetric(currentTick);
+    this.incrSentThisTick(currentTick);
     // drop it randomly
     if (rng.float(0, 1) < linkQuality.dropProbability) return;
 
