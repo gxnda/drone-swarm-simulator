@@ -25,7 +25,7 @@ export class SimulationWorker {
   private engine: Engine | null = null;
 
   public onMessage(type: CommandType, arg: SimulationCommand): WorkerMessage {
-    console.debug("Received message: " + type + arg);
+    console.debug("Worker received message: " + type + " " + JSON.stringify(arg));
     switch (type) {
       case "START":
         return this.handleStart(arg as StartCommand);

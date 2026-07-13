@@ -36,7 +36,6 @@ export class WorkerBridge {
   }
 
   public start(config: SimulationConfig) {
-    console.debug("bridge: posting start")
     this.worker.postMessage({
       type: "START",
       command: config as SimulationCommand,
