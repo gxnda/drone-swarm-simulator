@@ -3,10 +3,11 @@
  */
 import {IMetric} from "./IMetric";
 import {Engine} from "../Engine";
+import {MetricId} from "@drone-swarm/shared";
 
 
 export class MessageFrequencyMetric implements IMetric {
-  public readonly name: string = "MessageComplexity";
+  public readonly name = "MessageComplexity" as MetricId;
   public readonly description: string = "Total messages sent per tick"
   public stats: number[] = [];
 

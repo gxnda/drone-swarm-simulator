@@ -10,6 +10,7 @@ export {EngineSnapshot} from "./types/snapshots/EngineSnapshot"
 export {TopologySnapshot} from "./types/snapshots/TopologySnapshot";
 export {idsToPair, pairToIds} from "./types/DroneId";
 export type {AlgorithmId} from "./types/AlgorithmId";
+export type {MetricId} from "./types/MetricId";
 export type {Message, IPayload} from "./types/Message";
 export {WorldSnapshot} from "./types/snapshots/WorldSnapshot";
 export {DroneSnapshot} from "./types/snapshots/DroneSnapshot";

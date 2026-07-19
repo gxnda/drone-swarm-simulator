@@ -5,6 +5,7 @@ import {ConvergenceMetric} from "./ConvergenceMetric";
 import {MessageFrequencyMetric} from "./MessageFrequencyMetric";
 import {PartitionMetric} from "./PartitionMetric";
 import {MessageSizeMetric} from "./MessageSizeMetric";
+import {MetricId} from "@drone-swarm/shared";
 
 export class MetricsCollector {
   private readonly metrics: Set<IMetric> = new Set();
@@ -23,8 +24,8 @@ export class MetricsCollector {
     // this.register(new FaultToleranceMetric());
   }
 
-  public get(): Map<string, number[]> {
-    const statsPerMetric = new Map<string, number[]>();
+  public get(): Map<MetricId, number[]> {
+    const statsPerMetric = new Map<MetricId, number[]>();
     this.metrics.forEach(metric => {
       statsPerMetric.set(metric.name, metric.stats)
     })

@@ -1,11 +1,12 @@
 import {Vector3} from "three";
 import {IMetric} from "./IMetric";
 import {Engine} from "../Engine";
+import {MetricId} from "@drone-swarm/shared";
 
 
 export class CohesionMetric implements IMetric {
   public stats: number[] = [];
-  public name: string = "Cohesion";
+  public name = "Cohesion" as MetricId;
   public description: string = "Average distance from centre of mass";
 
   public compute(engine: Engine): number {

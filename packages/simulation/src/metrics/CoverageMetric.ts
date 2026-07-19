@@ -1,4 +1,4 @@
-import {SpatialHash} from "@drone-swarm/shared";
+import {MetricId, SpatialHash} from "@drone-swarm/shared";
 import {Drone} from "../drone/Drone";
 import {Vector3} from "three";
 import {NetworkTopology} from "../network/NetworkTopology";
@@ -11,7 +11,7 @@ import {Engine} from "../Engine";
  * What fraction of the world is covered by the drone ranges
  */
 export class CoverageMetric implements IMetric {
-  public readonly name: string = "Coverage";
+  public readonly name = "Coverage" as MetricId;
   public readonly description: string = "The fraction of the world covered" +
     " by the drone ranges";
   public stats: number[] = [];

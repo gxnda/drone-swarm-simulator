@@ -1,5 +1,6 @@
 import {IMetric} from "./IMetric";
 import {Engine} from "../Engine";
+import {MetricId} from "@drone-swarm/shared";
 
 function sizeof(obj: object) {
   const encoder = new TextEncoder();
@@ -37,7 +38,7 @@ function sizeof(obj: object) {
 }
 
 export class MessageSizeMetric implements IMetric {
-  public readonly name: string = "MessageComplexity";
+  public readonly name = "MessageComplexity" as MetricId;
   public readonly description: string = "Total messages sent per tick"
   public stats: number[] = [];
 

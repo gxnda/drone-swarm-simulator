@@ -1,12 +1,13 @@
 import {Vector3} from "three";
 import {IMetric} from "./IMetric";
 import {Engine} from "../Engine";
+import {MetricId} from "@drone-swarm/shared";
 
 /**
  * How converged the velocity vectors are
  */
 export class ConvergenceMetric implements IMetric {
-  public name: string = "Convergence";
+  public name = "Convergence" as MetricId;
   public description: string = "Average deviation from mean velocity"
   public stats: number[] = [];
 

@@ -1,8 +1,9 @@
 import {IMetric} from "./IMetric";
 import {Engine} from "../Engine";
+import {MetricId} from "@drone-swarm/shared";
 
 export class PartitionMetric implements IMetric {
-  public name: string = "Partition";
+  public name = "Partition" as MetricId;
   public description: string = "How many partitions are in the network topology";
   public stats: number[] = [];
 
