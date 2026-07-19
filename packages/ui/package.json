@@ -13,9 +13,11 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "three": "^0.184.0",
+    "@drone-swarm/renderer": "workspace:*",
     "@drone-swarm/shared": "workspace:*",
     "@drone-swarm/simulation": "workspace:*",
-    "@drone-swarm/renderer": "workspace:*"
+    "@types/react": "^19.2.15",
+    "react": "^19.2.6",
+    "three": "^0.184.0"
   }
 }

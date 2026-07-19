@@ -159,6 +159,12 @@ importers:
       '@drone-swarm/simulation':
         specifier: workspace:*
         version: link:../simulation
+      '@types/react':
+        specifier: ^19.2.15
+        version: 19.2.15
+      react:
+        specifier: ^19.2.6
+        version: 19.2.6
       three:
         specifier: ^0.184.0
         version: 0.184.0
