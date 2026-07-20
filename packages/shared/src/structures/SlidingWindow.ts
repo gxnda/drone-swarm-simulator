@@ -26,9 +26,7 @@ export class SlidingWindow<T> {
   }
 
   public get(index: number): T | undefined {
-    if (index >= this.size) {
-      return undefined;
-    }
+    if (index < 0 || index >= this.size) return undefined;
     const start = this.getStart();
     return this.q[(start + index) % this.capacity]!;
   }
