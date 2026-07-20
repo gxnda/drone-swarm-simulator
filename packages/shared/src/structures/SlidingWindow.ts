@@ -36,7 +36,7 @@ export class SlidingWindow<T> {
   public push(element: T): void {
     this.end = (this.end + 1) % this.capacity;
     this.q[this.end] = element;
-    this._size = Math.max(this.capacity, this._size + 1);
+    this._size = Math.min(this.capacity, this._size + 1);
   }
 
   public toArray(): T[] {
