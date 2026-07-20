@@ -1,7 +1,7 @@
 import {Vector3} from "three";
 import {IMetric} from "./IMetric";
 import {Engine} from "../Engine";
-import {MetricId} from "@drone-swarm/shared";
+import {MetricId, SlidingWindow} from "@drone-swarm/shared";
 
 /**
  * How converged the velocity vectors are
@@ -9,8 +9,11 @@ import {MetricId} from "@drone-swarm/shared";
 export class ConvergenceMetric implements IMetric {
   public name = "Convergence" as MetricId;
   public description: string = "Average deviation from mean velocity"
-  public stats: number[] = [];
+  public stats: SlidingWindow<number>;
 
+  constructor(capacity: number) {
+    this.stats = new SlidingWindow<number>(capacity);
+  }
   public compute(engine: Engine): number {
     let convergence = 0;
     const mean = new Vector3();
@@ -30,6 +33,6 @@ export class ConvergenceMetric implements IMetric {
   }
 
   public reset(): void {
-    this.stats =[];
+    this.stats.clear();
   }
 }

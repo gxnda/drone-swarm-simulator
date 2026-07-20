@@ -1,10 +1,10 @@
 import {Engine} from "../Engine";
-import {MetricId} from "@drone-swarm/shared";
+import {MetricId, SlidingWindow} from "@drone-swarm/shared";
 
 export interface IMetric {
   readonly name: MetricId;
   readonly description: string;
-  stats: number[];
+  stats: SlidingWindow<number>;
 
   compute(engine: Engine): number;
 

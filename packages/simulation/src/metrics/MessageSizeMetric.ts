@@ -1,6 +1,6 @@
 import {IMetric} from "./IMetric";
 import {Engine} from "../Engine";
-import {MetricId} from "@drone-swarm/shared";
+import {MetricId, SlidingWindow} from "@drone-swarm/shared";
 
 function sizeof(obj: object) {
   const encoder = new TextEncoder();
@@ -40,7 +40,11 @@ function sizeof(obj: object) {
 export class MessageSizeMetric implements IMetric {
   public readonly name = "MessageComplexity" as MetricId;
   public readonly description: string = "Total messages sent per tick"
-  public stats: number[] = [];
+  public stats: SlidingWindow<number>;
+
+  constructor(capacity: number) {
+    this.stats = new SlidingWindow<number>(capacity);
+  }
 
   public compute(engine: Engine): number {
     const metric = engine.getMessageBus().getMessagesAtCurrentTick();
@@ -54,6 +58,6 @@ export class MessageSizeMetric implements IMetric {
   }
 
   public reset() {
-    this.stats = [];
+    this.stats.clear();
   }
 }

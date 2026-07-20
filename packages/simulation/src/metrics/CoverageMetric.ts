@@ -1,4 +1,4 @@
-import {MetricId, SpatialHash} from "@drone-swarm/shared";
+import {MetricId, SlidingWindow, SpatialHash} from "@drone-swarm/shared";
 import {Drone} from "../drone/Drone";
 import {Vector3} from "three";
 import {NetworkTopology} from "../network/NetworkTopology";
@@ -14,7 +14,11 @@ export class CoverageMetric implements IMetric {
   public readonly name = "Coverage" as MetricId;
   public readonly description: string = "The fraction of the world covered" +
     " by the drone ranges";
-  public stats: number[] = [];
+  public stats: SlidingWindow<number>;
+
+  constructor(capacity: number) {
+    this.stats = new SlidingWindow<number>(capacity);
+  }
 
   public compute(engine: Engine): number {
     // TODO: Make efficient
@@ -45,7 +49,7 @@ export class CoverageMetric implements IMetric {
   }
 
   public reset(): void {
-    this.stats = [];
+    this.stats.clear();
   }
 
   private createConvexHull(_ps: Vector3[]) {

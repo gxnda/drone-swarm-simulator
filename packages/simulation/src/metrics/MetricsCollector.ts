@@ -10,16 +10,18 @@ import {MetricId} from "@drone-swarm/shared";
 export class MetricsCollector {
   private readonly metrics: Set<IMetric> = new Set();
 
+  constructor(readonly capacity: number) {}
+
   public register(metric: IMetric): void {
     this.metrics.add(metric);
   }
 
   public registerAll() {
-    this.register(new CohesionMetric());
-    this.register(new ConvergenceMetric());
-    this.register(new MessageFrequencyMetric());
-    this.register(new MessageSizeMetric());
-    this.register(new PartitionMetric());
+    this.register(new CohesionMetric(this.capacity));
+    this.register(new ConvergenceMetric(this.capacity));
+    this.register(new MessageFrequencyMetric(this.capacity));
+    this.register(new MessageSizeMetric(this.capacity));
+    this.register(new PartitionMetric(this.capacity));
     // this.register(new CoverageMetric());
     // this.register(new FaultToleranceMetric());
   }
@@ -27,7 +29,7 @@ export class MetricsCollector {
   public get(): Map<MetricId, number[]> {
     const statsPerMetric = new Map<MetricId, number[]>();
     this.metrics.forEach(metric => {
-      statsPerMetric.set(metric.name, metric.stats)
+      statsPerMetric.set(metric.name, metric.stats.toArray())
     })
     return statsPerMetric;
   }

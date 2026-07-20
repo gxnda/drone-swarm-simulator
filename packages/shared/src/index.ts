@@ -33,3 +33,4 @@ export type {
 // Other
 export {Constants, DEFAULT_CONFIG} from "./constants";
 export {Obstacle} from "./types/Obstacle";
+export {SlidingWindow} from "./structures/SlidingWindow";

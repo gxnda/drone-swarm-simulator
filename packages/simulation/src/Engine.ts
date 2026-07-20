@@ -39,7 +39,7 @@ export class Engine {
     this.algorithm = AlgorithmFactory.fromConfig(config.algorithmConfig);
     this.messageBus = new MessageBus(new Map());
 
-    this.metrics = new MetricsCollector();
+    this.metrics = new MetricsCollector(config.metricConfig.previousMetricCapacity);
     this.metrics.registerAll();
   }
 

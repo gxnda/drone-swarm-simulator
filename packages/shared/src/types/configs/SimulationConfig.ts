@@ -3,6 +3,7 @@ import {SpawnStrategy} from "../SpawnStrategy";
 import {AlgorithmConfig} from "./AlgorithmConfig";
 import {NetworkConfig} from "./NetworkConfig";
 import {SerialisedObstacle} from "../SerialisedObstacle";
+import {MetricConfig} from "./MetricConfig";
 
 export interface SimulationConfig {
   readonly droneMaxSpeed: number;
@@ -21,6 +22,7 @@ export interface SimulationConfig {
   readonly boundsMax: Vector3;
   readonly preferredBoundaryBehaviour: BoundaryBehaviour
   // readonly physics: PhysicsConfig;
+  readonly metricConfig: MetricConfig;
 }
 
 export enum BoundaryBehaviour {
