@@ -22,7 +22,7 @@ export class SlidingWindow<T> {
   }
 
   private getStart(): number {
-    return ((this.end - this._size) + 1) % this.capacity;
+    return ((this.end - this._size) + 1 + this.capacity) % this.capacity;
   }
 
   public get(index: number): T | undefined {
