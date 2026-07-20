@@ -18,7 +18,6 @@ export class SlidingWindow<T> {
   public clear(): void {
     this.end = -1;
     this._size = 0;
-    this.q.length = 0;
   }
 
   private getStart(): number {
