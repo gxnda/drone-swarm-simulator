@@ -25,6 +25,14 @@ export class RandomWaypointAlgorithm implements ICoordinationAlgorithm {
 
     public initialise(_drones: ReadonlyArray<Drone>, _config: RandomWaypointConfig): void {
     }
+    
+    private getRandomTargetLocation(drone: Readonly<Drone>, world: Readonly<WorldView>): Vector3 {
+        const location = world.bounds.randomPoint(this.rng);
+        if (drone.is2D) {
+            location.y = drone.location.y;
+        }
+        return location;
+    }
 
     public computeDesiredVelocity(
         drone: Readonly<Drone>,
@@ -38,7 +46,7 @@ export class RandomWaypointAlgorithm implements ICoordinationAlgorithm {
         }
         // set a new target location if the drone doesn't have one yet
         if (!(this.targetLocationMap.has(drone.id))) {
-            this.targetLocationMap.set(drone.id, world.bounds.randomPoint(this.rng));
+            this.targetLocationMap.set(drone.id, this.getRandomTargetLocation(drone, world));
         }
 
         // work out which direction we're going in and if we're there yet

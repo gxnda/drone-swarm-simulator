@@ -13,6 +13,8 @@ export class Drone {
   public maxAcceleration: number | null = null;
   public maxAngularAcceleration: number | null = null;
 
+  public is2D: boolean = false;
+
   public communicationRange: number;
 
   private state: DroneState = DroneState.ACTIVE;
@@ -20,12 +22,14 @@ export class Drone {
   private becameIsolatedAtTick: number | null = null;
   private inbox: Message[];
 
-  constructor(id: DroneId, location: Vector3, range: number, maxSpeed?: number, maxAcceleration?: number, minSpeed?: number, maxAngularAcceleration?: number) {
+  constructor(id: DroneId, location: Vector3, range: number, maxSpeed?: number, maxAcceleration?: number,
+              minSpeed?: number, maxAngularAcceleration?: number, is2D?: boolean) {
     this.id = id;
     this.location = location;
     this.communicationRange = range;
     this.orientation = new Quaternion();
 
+    if (is2D) this.is2D = is2D;
     if (maxSpeed) this.maxSpeed = maxSpeed;
     if (minSpeed) this.minSpeed = minSpeed;
     if (maxAcceleration) this.maxAcceleration = maxAcceleration;

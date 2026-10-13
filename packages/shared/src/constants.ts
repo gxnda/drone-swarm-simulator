@@ -85,6 +85,7 @@ export const DEFAULT_CONFIG: SimulationConfig = {
     droneMinSpeed: 0.1,
     droneMaxAccel: 1,
     droneMaxAngularAccel: 1,
+    proportionOf2DDrones: 0.4,
     droneCommunicationRange: 6,
     worldSize: new Vector3(200, 200, 200),
     metricConfig: {

@@ -10,6 +10,7 @@ export interface SimulationConfig {
   readonly droneMinSpeed?: number;
   readonly droneMaxAccel: number; // max acceleration per tick
   readonly droneMaxAngularAccel?: number;
+  readonly proportionOf2DDrones?: number; // 0 to 1, proportion of drones that are restricted to 2D movement
   readonly worldSize: Vector3;
   readonly dt?: number;
   readonly chunkSize: number;

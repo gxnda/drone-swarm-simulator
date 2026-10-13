@@ -92,7 +92,9 @@ export class Engine {
           this.config.droneMaxSpeed,
           this.config.droneMaxAccel,
           this.config.droneMinSpeed,
-          this.config.droneMaxAngularAccel
+          this.config.droneMaxAngularAccel,
+          // Randomly assign some drones to be 2D drones based on the proportion specified in the config
+          this.config.proportionOf2DDrones ? (this.rng.float(0, 1) < this.config.proportionOf2DDrones) : false
         );
       drone.velocity = new Vector3(1,0,0)
       drones.push(drone)
@@ -148,21 +150,29 @@ export class Engine {
     return messages;
   }
 
-  private applyAndClampVelocities(drones: ReadonlySet<Drone>, velocities: Map<Drone, Vector3>): void {
+  private updateAndClampVelocities(drones: ReadonlySet<Drone>, velocities: Map<Drone, Vector3>): void {
     drones.forEach((drone) => {
       const lastVelocity = drone.velocity.clone();
       let velocity = velocities.get(drone)!.clone();
+
+      // clamp velocity to min speed
       if (drone.minSpeed && velocity.lengthSq() < drone.minSpeed ** 2) {
         velocity = velocity.normalize().multiplyScalar(drone.minSpeed);
       }
+
+      // clamp velocity to max speed
       if (drone.maxSpeed && velocity.lengthSq() > drone.maxSpeed ** 2) {
         velocity = velocity.normalize().multiplyScalar(drone.maxSpeed);
       }
+
+      // clamp acceleration to max acceleration
       let accel = velocity.clone().sub(lastVelocity);
       if (drone.maxAcceleration && accel.lengthSq() > drone.maxAcceleration ** 2) {
         accel = accel.normalize().multiplyScalar(drone.maxAcceleration);
         velocity = lastVelocity.clone().add(accel);
       }
+
+      // clamp angular acceleration to max angular acceleration, check the stack exchange link for the math behind this
       // https://math.stackexchange.com/questions/1805810/clamp-angle-between-two-vectors
       if (drone.maxAngularAcceleration && lastVelocity.angleTo(velocity) > drone.maxAngularAcceleration) {
         const currentSpeed = velocity.length();
@@ -185,6 +195,9 @@ export class Engine {
               .multiplyScalar(currentSpeed)
           );
         }
+      }
+      if (drone.is2D) {
+        velocity.y = 0;
       }
       drone.velocity = velocity.clone();
       drone.acceleration = accel;
@@ -214,6 +227,9 @@ export class Engine {
   private applyVelocity(drones: ReadonlySet<Drone>) {
     drones.forEach((drone) => {
       drone.location.add(drone.velocity);
+      if (drone.is2D) {
+        drone.location.y = this.world.bounds.min.y;
+      }
     })
   }
 
@@ -240,7 +256,7 @@ export class Engine {
     const messages = this.computeAllMessages(drones);
     this.addMessagesToBus(messages);
 
-    this.applyAndClampVelocities(drones, desiredVelocities);
+    this.updateAndClampVelocities(drones, desiredVelocities);
     this.applyObstacleAvoidance(drones);
 
     this.applyVelocity(drones);
