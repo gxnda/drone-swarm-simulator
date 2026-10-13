@@ -18,16 +18,16 @@ export type {SerialisedObstacle} from "./types/SerialisedObstacle";
 export type {SimulationConfig} from "./types/configs/SimulationConfig";
 export {BoundaryBehaviour} from "./types/configs/SimulationConfig";
 export type {SpawnStrategy} from "./types/SpawnStrategy";
-export type {AlgorithmConfig, BoidsConfig} from "./types/configs/AlgorithmConfig";
+export type {AlgorithmConfig, BoidsConfig, RandomWaypointConfig} from "./types/configs/AlgorithmConfig";
 export type {LinkQuality} from "./types/LinkQuality";
 export {DroneState} from "./types/DroneState";
 export type {
-  NetworkConfig,
-  ContentionLatencyConfig,
-  LogDistanceConfig,
-  FlatLatencyConfig,
-  AttenuationConfig,
-  LatencyConfig
+    NetworkConfig,
+    ContentionLatencyConfig,
+    LogDistanceConfig,
+    FlatLatencyConfig,
+    AttenuationConfig,
+    LatencyConfig
 } from "./types/configs/NetworkConfig";
 
 // Other
