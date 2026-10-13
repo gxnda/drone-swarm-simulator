@@ -29,7 +29,7 @@ export class RandomWaypointAlgorithm implements ICoordinationAlgorithm {
     private getRandomTargetLocation(drone: Readonly<Drone>, world: Readonly<WorldView>): Vector3 {
         const location = world.bounds.randomPoint(this.rng);
         if (drone.is2D) {
-            location.y = drone.location.y;
+            location.y = world.bounds.min.y;
         }
         return location;
     }
