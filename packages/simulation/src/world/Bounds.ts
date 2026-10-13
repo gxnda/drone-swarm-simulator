@@ -1,92 +1,99 @@
 // World border thing
 
 import {Box3, Vector3} from "three";
-import {BoundaryBehaviour} from "@drone-swarm/shared";
+import {BoundaryBehaviour, SeededRng} from "@drone-swarm/shared";
 
 export class Bounds {
-  private box: Box3;
-  public bounciness: number = 1;
-  readonly centre: Vector3 = new Vector3();
-  readonly size: Vector3 = new Vector3();
+    private box: Box3;
+    public bounciness: number = 1;
+    readonly centre: Vector3 = new Vector3();
+    readonly size: Vector3 = new Vector3();
 
-  readonly preferredBehaviour: BoundaryBehaviour = BoundaryBehaviour.REFLECT;
+    readonly preferredBehaviour: BoundaryBehaviour = BoundaryBehaviour.REFLECT;
 
-  constructor(readonly min: Vector3, readonly max: Vector3, behaviour?: BoundaryBehaviour) {
-    this.min = min;
-    this.max = max;
-    this.box = new Box3(min, max);
-    this.box.getCenter(this.centre)
-    this.box.getSize(this.size);
-    if (behaviour) this.preferredBehaviour = behaviour;
-  }
-
-  public doPreferred(p: Vector3, v: Vector3, saveTo: Vector3): {p: Vector3, v: Vector3} {
-    switch (this.preferredBehaviour) {
-      case BoundaryBehaviour.CLAMP:
-        return {p: this.clamp(p, saveTo), v: v};
-      case BoundaryBehaviour.REFLECT: {
-        const reflectedVel = this.reflect(p, v);
-        const clampedPos = this.clamp(p, saveTo);
-        return {p: clampedPos, v: reflectedVel};
-      }
-      case BoundaryBehaviour.WRAP:
-        return {p: this.wrap(p, saveTo), v: v};
+    constructor(readonly min: Vector3, readonly max: Vector3, behaviour?: BoundaryBehaviour) {
+        this.min = min;
+        this.max = max;
+        this.box = new Box3(min, max);
+        this.box.getCenter(this.centre)
+        this.box.getSize(this.size);
+        if (behaviour) this.preferredBehaviour = behaviour;
     }
-  }
 
-  public* iterate(step: number = 1) {
-    for (let x = this.min.x; x < this.max.x; x += step) {
-      for (let y = this.min.y; y < this.max.y; y += step) {
-        for (let z = this.min.z; z < this.max.z; z += step) {
-          yield new Vector3(x, y, z);
+    public doPreferred(p: Vector3, v: Vector3, saveTo: Vector3): { p: Vector3, v: Vector3 } {
+        switch (this.preferredBehaviour) {
+            case BoundaryBehaviour.CLAMP:
+                return {p: this.clamp(p, saveTo), v: v};
+            case BoundaryBehaviour.REFLECT: {
+                const reflectedVel = this.reflect(p, v);
+                const clampedPos = this.clamp(p, saveTo);
+                return {p: clampedPos, v: reflectedVel};
+            }
+            case BoundaryBehaviour.WRAP:
+                return {p: this.wrap(p, saveTo), v: v};
         }
-      }
     }
-    return;
-  }
 
-  public contains(p: Vector3) {
-    return this.box.containsPoint(p)
-  }
+    public* iterate(step: number = 1) {
+        for (let x = this.min.x; x < this.max.x; x += step) {
+            for (let y = this.min.y; y < this.max.y; y += step) {
+                for (let z = this.min.z; z < this.max.z; z += step) {
+                    yield new Vector3(x, y, z);
+                }
+            }
+        }
+        return;
+    }
 
-  public clamp(p: Vector3, saveTo: Vector3 = new Vector3()): Vector3 {
-    return this.box.clampPoint(p, saveTo)
-  }
+    public contains(p: Vector3) {
+        return this.box.containsPoint(p)
+    }
 
-  public reflect(position: Vector3, velocity: Vector3): Vector3 {
-    // DOES NOT MANIPULATE P.
-    const next = position.clone().add(velocity)
-    const reflectedVelocity = velocity.clone();
-    if (this.box.containsPoint(next)) {
-      return velocity; // no reflection
+    public clamp(p: Vector3, saveTo: Vector3 = new Vector3()): Vector3 {
+        return this.box.clampPoint(p, saveTo)
     }
-    if (next.x < this.min.x || next.x > this.max.x) {
-      reflectedVelocity.x *= -1 * this.bounciness;
-    }
-    if (next.y < this.min.y || next.y > this.max.y) {
-      reflectedVelocity.y *= -1 * this.bounciness;
-    }
-    if (next.z < this.min.z || next.z > this.max.z) {
-      reflectedVelocity.z *= -1 * this.bounciness;
-    }
-    return reflectedVelocity;
-  }
 
-  public wrap(p: Vector3, saveTo: Vector3 = new Vector3()): Vector3 {
-    if (this.contains(p)) {
-      if (saveTo !== p) {
-        saveTo = p.clone();
-        return saveTo;
-      } else {
-        return p
-      }
+    public reflect(position: Vector3, velocity: Vector3): Vector3 {
+        // DOES NOT MANIPULATE P.
+        const next = position.clone().add(velocity)
+        const reflectedVelocity = velocity.clone();
+        if (this.box.containsPoint(next)) {
+            return velocity; // no reflection
+        }
+        if (next.x < this.min.x || next.x > this.max.x) {
+            reflectedVelocity.x *= -1 * this.bounciness;
+        }
+        if (next.y < this.min.y || next.y > this.max.y) {
+            reflectedVelocity.y *= -1 * this.bounciness;
+        }
+        if (next.z < this.min.z || next.z > this.max.z) {
+            reflectedVelocity.z *= -1 * this.bounciness;
+        }
+        return reflectedVelocity;
     }
-    saveTo = new Vector3(
-      (p.x - this.min.x) % this.size.x,
-      (p.y - this.min.y) % this.size.y,
-      (p.z - this.min.z) % this.size.z
-    );
-    return saveTo
-  }
 
-}
+    public wrap(p: Vector3, saveTo: Vector3 = new Vector3()): Vector3 {
+        if (this.contains(p)) {
+            if (saveTo !== p) {
+                saveTo = p.clone();
+                return saveTo;
+            } else {
+                return p
+            }
+        }
+        saveTo = new Vector3(
+            (p.x - this.min.x) % this.size.x,
+            (p.y - this.min.y) % this.size.y,
+            (p.z - this.min.z) % this.size.z
+        );
+        return saveTo
+    }
+
+    public randomPoint(rng: SeededRng): Vector3 {
+        return new Vector3(
+            rng.float(this.min.x, this.max.x),
+            rng.float(this.min.y, this.max.y),
+            rng.float(this.min.z, this.max.z),
+        )
+    }
+} 
