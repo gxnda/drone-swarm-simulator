@@ -13,7 +13,9 @@
     - [ ] Boids with random waypoint centroid (similar to pursue model ig)
     - [ ] Column Mobility Model
 - [ ] Add NS-3 integration instead of these bad attenuation models
-    - [ ] Export WorldSnapshot to NS-3 and allow it to maybe generate topology with it?
+    - [ ] Export WorldSnapshot to NS-3 and allow it to maybe generate topology and message bus with it?
+        - NS-3 network needs to: be sent {dt, drone id positions (Topology), and messages to send (MessageBus)},
+        - and should return every message that each drone can hear, and maybe dropped message count for metrics
     - [ ] Remove or entirely refactor simulation/src/network/NetworkTopology.ts
     - [ ] Add an NS3Bridge in the TypeScript to communicate with a new ns3 folder
         - [ ] Run NS-3 in a separate process and communicate with it via IPC (e.g., sockets, shared memory, or something

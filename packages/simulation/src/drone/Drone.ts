@@ -1,5 +1,5 @@
-import {DroneId, DroneSnapshot, DroneState, Message} from "@drone-swarm/shared";
-import {Matrix4, Quaternion, Vector3} from "three";
+import { DroneId, DroneSnapshot, DroneState, Message } from "@drone-swarm/shared";
+import { Matrix4, Quaternion, Vector3 } from "three";
 
 export class Drone {
   readonly id: DroneId;
@@ -23,7 +23,7 @@ export class Drone {
   private inbox: Message[];
 
   constructor(id: DroneId, location: Vector3, range: number, maxSpeed?: number, maxAcceleration?: number,
-              minSpeed?: number, maxAngularAcceleration?: number, is2D?: boolean) {
+    minSpeed?: number, maxAngularAcceleration?: number, is2D?: boolean) {
     this.id = id;
     this.location = location;
     this.communicationRange = range;
@@ -86,9 +86,9 @@ export class Drone {
     this.failedAtTick = tick;
   }
 
-  public isActive(): boolean {return this.state === DroneState.ACTIVE}
-  public isIsolated(): boolean {return this.state === DroneState.ISOLATED}
-  public isFailed(): boolean {return this.state === DroneState.FAILED}
+  public isActive(): boolean { return this.state === DroneState.ACTIVE }
+  public isIsolated(): boolean { return this.state === DroneState.ISOLATED }
+  public isFailed(): boolean { return this.state === DroneState.FAILED }
 
   public getState(): DroneState | null {
     return this.state;

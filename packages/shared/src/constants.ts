@@ -2,10 +2,10 @@ import {
     BoundaryBehaviour,
     SimulationConfig
 } from "./types/configs/SimulationConfig";
-import {Vector3} from "three";
-import {AlgorithmId} from "./types/AlgorithmId";
-import {BoidsConfig, RandomWaypointConfig} from "./types/configs/AlgorithmConfig";
-import {MetricConfig} from "./types/configs/MetricConfig";
+import { Vector3 } from "three";
+import { AlgorithmId } from "./types/AlgorithmId";
+import { BoidsConfig, RandomWaypointConfig } from "./types/configs/AlgorithmConfig";
+import { MetricConfig } from "./types/configs/MetricConfig";
 
 export enum Constants {
 }
@@ -13,6 +13,7 @@ export enum Constants {
 export const DEFAULT_BOIDS_CONFIG: SimulationConfig = {
     boundsMax: new Vector3(100, 100, 100),
     boundsMin: new Vector3(-100, -100, -100),
+    dt: 0.05,
     chunkSize: 10,
     preferredBoundaryBehaviour: BoundaryBehaviour.REFLECT,
     seed: "test",
@@ -55,6 +56,7 @@ export const DEFAULT_BOIDS_CONFIG: SimulationConfig = {
 export const DEFAULT_CONFIG: SimulationConfig = {
     boundsMax: new Vector3(100, 100, 100),
     boundsMin: new Vector3(-100, -100, -100),
+    dt: 0.05,
     chunkSize: 10,
     preferredBoundaryBehaviour: BoundaryBehaviour.REFLECT,
     seed: "test",

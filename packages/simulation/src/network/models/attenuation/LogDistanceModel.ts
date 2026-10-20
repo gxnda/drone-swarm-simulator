@@ -1,7 +1,7 @@
-import {Drone} from "../../../drone/Drone";
-import {LogDistanceConfig, SeededRng} from "@drone-swarm/shared";
-import {IAttenuationModel} from "./IAttenuationModel";
-import {Vector3} from "three";
+import { Drone } from "../../../drone/Drone";
+import { LogDistanceConfig, SeededRng } from "@drone-swarm/shared";
+import { IAttenuationModel } from "./IAttenuationModel";
+import { Vector3 } from "three";
 
 
 export class LogDistanceModel implements IAttenuationModel {
@@ -9,7 +9,7 @@ export class LogDistanceModel implements IAttenuationModel {
   constructor(readonly config: LogDistanceConfig) {
   }
 
-  public getDropProbability(a: Drone, b: Drone, rng: SeededRng): {dropProbability: number} | null {
+  public getDropProbability(a: Drone, b: Drone, rng: SeededRng): { dropProbability: number } | null {
     return this.getDropProbabilityAtLocation(a.location, b.location, rng);
   }
 
@@ -35,7 +35,7 @@ export class LogDistanceModel implements IAttenuationModel {
     // note it doesn't have the minus sign before margin so this decreases
     // as margin increases
     const dropProbability = 1 / (1 + Math.exp(margin / this.config.dropSteepness))
-    return {dropProbability: dropProbability};
+    return { dropProbability: dropProbability };
   }
 
 

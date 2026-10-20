@@ -1,14 +1,14 @@
 // @vitest-environment node
 
-import {describe, expect, it, vi} from "vitest";
-import {Engine} from "../src";
+import { describe, expect, it, vi } from "vitest";
+import { Engine } from "../src";
 import {
     AlgorithmId,
     BoidsConfig,
     BoundaryBehaviour, EngineSnapshot,
     SimulationConfig,
 } from "@drone-swarm/shared";
-import {Vector3} from "three";
+import { Vector3 } from "three";
 
 describe("Engine", () => {
     it("should initialize correctly", () => {
@@ -16,6 +16,7 @@ describe("Engine", () => {
             boundsMax: new Vector3(100, 100, 100),
             boundsMin: new Vector3(-100, -100, -100),
             chunkSize: 10,
+            dt: 1,
             preferredBoundaryBehaviour: BoundaryBehaviour.REFLECT,
             seed: "test",
             spawnStrategy: {
@@ -45,6 +46,9 @@ describe("Engine", () => {
                     type: "FreeSpaceConfig",
                     range: 20
                 }
+            },
+            metricConfig: {
+                previousMetricCapacity: 25
             },
             obstacles: [],
             droneMaxSpeed: 5,
@@ -62,6 +66,7 @@ describe("Engine", () => {
             boundsMax: new Vector3(100, 100, 100),
             boundsMin: new Vector3(-100, -100, -100),
             chunkSize: 10,
+            dt: 1,
             preferredBoundaryBehaviour: BoundaryBehaviour.REFLECT,
             seed: "test",
             spawnStrategy: {
@@ -91,6 +96,9 @@ describe("Engine", () => {
                     type: "FreeSpaceConfig",
                     range: 20
                 }
+            },
+            metricConfig: {
+                previousMetricCapacity: 25
             },
             droneMaxSpeed: 5,
             droneMaxAccel: 1,
@@ -114,6 +122,7 @@ describe("Engine", () => {
             boundsMax: new Vector3(100, 100, 100),
             boundsMin: new Vector3(-100, -100, -100),
             chunkSize: 10,
+            dt: 1,
             preferredBoundaryBehaviour: BoundaryBehaviour.REFLECT,
             seed: "test",
             spawnStrategy: {
@@ -143,6 +152,9 @@ describe("Engine", () => {
                     type: "FreeSpaceConfig",
                     range: 0.0001
                 }
+            },
+            metricConfig: {
+                previousMetricCapacity: 25
             },
             obstacles: [],
             droneMaxSpeed: 5,
@@ -192,6 +204,9 @@ describe("Engine", () => {
                     type: "FreeSpaceConfig",
                     range: 20
                 }
+            },
+            metricConfig: {
+                previousMetricCapacity: 25
             },
             obstacles: [],
             droneMaxSpeed: 5,

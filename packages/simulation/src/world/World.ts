@@ -1,4 +1,4 @@
-import {Vector3} from "three";
+import { Vector3 } from "three";
 import {
   AlgorithmConfig,
   DroneId,
@@ -10,9 +10,9 @@ import {
   SpawnStrategy,
   WorldSnapshot
 } from "@drone-swarm/shared";
-import {Drone} from "../drone/Drone";
-import {Obstacle} from "@drone-swarm/shared";
-import {Bounds} from "./Bounds";
+import { Drone } from "../drone/Drone";
+import { Obstacle } from "@drone-swarm/shared";
+import { Bounds } from "./Bounds";
 
 /**
  * The world but without any of the drones, gets sent to algorithms to stop
@@ -31,7 +31,7 @@ export class WorldView {
     this.bounds = new Bounds(config.boundsMin, config.boundsMax, config.preferredBoundaryBehaviour);
     this.obstacleHash = new SpatialHash<Obstacle>(config.chunkSize);
     this.tick = 0;
-    this.dt = config.dt ?? 1;
+    this.dt = config.dt;
     this.elapsedSec = 0;
   }
 
