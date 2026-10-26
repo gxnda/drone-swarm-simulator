@@ -43,6 +43,7 @@ export class NetworkTopology {
     drones.forEach(from => {
       adjacency.set(from.id, new Set());
       drones.forEach(to => {
+        if (from.id === to.id) return;
         const dropProbability = this.attenuationModel.getDropProbability(from, to, this.rng);
         if (dropProbability) {
           adjacency.get(from.id)!.add(to.id);
