@@ -1,1 +1,1 @@
-export type ObstacleId = string & {readonly __brand: "ObstacleId"};
+export type ObstacleId = string & { readonly __brand: "ObstacleId" };

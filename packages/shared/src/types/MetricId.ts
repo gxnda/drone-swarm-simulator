@@ -1,1 +1,1 @@
-export type MetricId = string & {__brand: "MetricId"};
+export type MetricId = string & { __brand: "MetricId" };

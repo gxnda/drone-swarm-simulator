@@ -1,4 +1,4 @@
-import {Vector3} from "three";
+import { Vector3 } from "three";
 
 export type SpawnStrategy =
   | { type: "random"; count: number; boundMin: Vector3, boundMax: Vector3 }

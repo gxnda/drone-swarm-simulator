@@ -1,4 +1,4 @@
-import {ISnapshot} from "./ISnapshot";
+import { ISnapshot } from "./ISnapshot";
 
 export class MetricsSnapshot extends ISnapshot {
     public frameRate: number;

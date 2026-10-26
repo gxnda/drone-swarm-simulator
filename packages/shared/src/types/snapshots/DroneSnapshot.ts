@@ -1,6 +1,6 @@
-import {DroneId} from "../DroneId";
-import {Quaternion, Vector3} from "three";
-import {ISnapshot} from "./ISnapshot";
+import { DroneId } from "../DroneId";
+import { Quaternion, Vector3 } from "three";
+import { ISnapshot } from "./ISnapshot";
 
 export class DroneSnapshot extends ISnapshot {
     public id: DroneId;

@@ -1,6 +1,6 @@
-export type DroneId = string & {readonly __brand: "DroneId"};
+export type DroneId = string & { readonly __brand: "DroneId" };
 
-export type DroneIdPair = string & {readonly __brand: "DroneIdPair"};
+export type DroneIdPair = string & { readonly __brand: "DroneIdPair" };
 
 export function idsToPair(a: DroneId, b: DroneId): DroneIdPair {
   return `${a}-${b}` as DroneIdPair;

@@ -1,1 +1,1 @@
-export type AlgorithmId = string & {__brand: "AlgorithmId"};
+export type AlgorithmId = string & { __brand: "AlgorithmId" };

@@ -1,5 +1,6 @@
 import { DroneId, LinkQuality, Message, SeededRng } from "@drone-swarm/shared";
 import { Drone } from "../drone/Drone";
+import { IMessageBus } from "./IMessageBus";
 
 /**
  * The ether that messages get sent across
@@ -7,18 +8,18 @@ import { Drone } from "../drone/Drone";
  * Has a queue of arrival ticks and messages, when a message is sent it can
  * randomly disappear
  */
-export class MessageBus {
+export class MessageBus implements IMessageBus {
   private currentTick: number = 0;
   private _totalSentThisTick: number = 0;
 
   constructor(private readonly queue: Map<number, Message[]>) { }
 
-  public getTotalSentThisTick() {
+  public getTotalSentThisTick(): number {
     return this._totalSentThisTick;
   }
 
-  public getMessagesAtCurrentTick() {
-    return this.queue.get(this.currentTick);
+  public getMessagesAtCurrentTick(): Message[] {
+    return this.queue.get(this.currentTick)!;
   }
 
   private incrSentThisTick(tick: number) {

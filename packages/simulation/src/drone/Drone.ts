@@ -50,7 +50,7 @@ export class Drone {
     return current.slerp(target, Math.min(1, turnSpeed * dt))
   }
 
-  public rotateToMatchVelocityWithBanking() {
+  public rotateToMatchVelocityWithBanking(dt: number = 1) {
     if (this.velocity.lengthSq() < 1e-8) return this.orientation;
 
     const forward = this.velocity.clone().normalize();
@@ -66,7 +66,7 @@ export class Drone {
     )
     target.setFromRotationMatrix(m);
 
-    this.setOrientation(this.smoothUpdateRotation(target, this.orientation));
+    this.setOrientation(this.smoothUpdateRotation(target, this.orientation, dt));
     return this.orientation;
   }
 

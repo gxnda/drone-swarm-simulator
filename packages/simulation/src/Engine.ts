@@ -166,32 +166,34 @@ export class Engine {
       }
 
       // clamp acceleration to max acceleration
-      let accel = velocity.clone().sub(lastVelocity);
-      if (drone.maxAcceleration && accel.lengthSq() > drone.maxAcceleration ** 2) {
-        accel = accel.normalize().multiplyScalar(drone.maxAcceleration);
-        velocity = lastVelocity.clone().add(accel);
+      let velocityDelta = velocity.clone().sub(lastVelocity);
+      const maxVelocityDelta = (drone.maxAcceleration ?? Infinity) * this.world.dt;
+      if (velocityDelta.lengthSq() > maxVelocityDelta ** 2) {
+        velocityDelta = velocityDelta.normalize().multiplyScalar(maxVelocityDelta);
+        velocity = lastVelocity.clone().add(velocityDelta);
       }
 
       // clamp angular acceleration to max angular acceleration, check the stack exchange link for the math behind this
       // https://math.stackexchange.com/questions/1805810/clamp-angle-between-two-vectors
-      if (drone.maxAngularAcceleration && lastVelocity.angleTo(velocity) > drone.maxAngularAcceleration) {
+      const maxAngle = (drone.maxAngularAcceleration ?? Infinity) * this.world.dt;
+      if (lastVelocity.lengthSq() > 1e-8 && velocity.lengthSq() > 1e-8 && lastVelocity.angleTo(velocity) > maxAngle) {
         const currentSpeed = velocity.length();
 
         const currentHeading = lastVelocity.clone().normalize();
         const targetHeading = velocity.clone().normalize();
         const cosBeta = currentHeading.dot(targetHeading);
-        const cosMax = Math.cos(drone.maxAngularAcceleration);
+        const cosMax = Math.cos(maxAngle);
 
         if (cosBeta < -0.9999) { //
           const up = new Vector3(0, 0, 1);
           if (Math.abs(currentHeading.dot(up)) > 0.99) up.set(1, 0, 0);
           const axis = new Vector3().crossVectors(currentHeading, up).normalize();
-          velocity.copy(currentHeading.clone().applyAxisAngle(axis, drone.maxAngularAcceleration));
+          velocity.copy(currentHeading.clone().applyAxisAngle(axis, maxAngle).multiplyScalar(currentSpeed));
         } else {
           const perpendicular = targetHeading.clone().sub(currentHeading.clone().multiplyScalar(cosBeta));
           velocity.copy(
             currentHeading.clone().multiplyScalar(cosMax)
-              .add(perpendicular.clone().normalize().multiplyScalar(Math.sin(drone.maxAngularAcceleration)))
+            .add(perpendicular.clone().normalize().multiplyScalar(Math.sin(maxAngle)))
               .multiplyScalar(currentSpeed)
           );
         }
@@ -200,7 +202,7 @@ export class Engine {
         velocity.y = 0;
       }
       drone.velocity = velocity.clone();
-      drone.acceleration = accel;
+      drone.acceleration = velocity.clone().sub(lastVelocity).divideScalar(this.world.dt);
     })
   }
 
@@ -218,7 +220,7 @@ export class Engine {
 
   private applyBoundaryBehaviour(drones: ReadonlySet<Drone>) {
     drones.forEach((drone) => {
-      const dict = this.world.bounds.doPreferred(drone.location, drone.velocity, new Vector3());
+      const dict = this.world.bounds.doPreferred(drone.location, drone.velocity, new Vector3(), this.world.dt);
       drone.location = dict.p;
       drone.velocity = dict.v;
     })
@@ -226,7 +228,7 @@ export class Engine {
 
   private applyVelocity(drones: ReadonlySet<Drone>) {
     drones.forEach((drone) => {
-      drone.location.add(drone.velocity);
+      drone.location.addScaledVector(drone.velocity, this.world.dt);
       if (drone.is2D) {
         drone.location.y = this.world.bounds.min.y;
       }
@@ -235,7 +237,7 @@ export class Engine {
 
   private updateDroneOrientations(drones: ReadonlySet<Drone>) {
     drones.forEach((drone) => {
-      drone.rotateToMatchVelocityWithBanking()
+      drone.rotateToMatchVelocityWithBanking(this.world.dt)
     })
   }
 

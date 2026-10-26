@@ -7,7 +7,7 @@ export { SeededRng } from "./math/SeededRng";
 
 export type { NS3Input } from "./types/ns3/NS3Input";
 export type { RecievedFrame } from "./types/ns3/RecievedFrame";
-export type { Transmission } from "./types/ns3/Transmission";
+export type { NS3Transmission } from "./types/ns3/NS3Transmission";
 export type { DroneId, DroneIdPair } from "./types/DroneId";
 export type { ObstacleId } from "./types/ObstacleId";
 export { EngineSnapshot } from "./types/snapshots/EngineSnapshot"
@@ -15,7 +15,7 @@ export { TopologySnapshot } from "./types/snapshots/TopologySnapshot";
 export { idsToPair, pairToIds } from "./types/DroneId";
 export type { AlgorithmId } from "./types/AlgorithmId";
 export type { MetricId } from "./types/MetricId";
-export type { Message, IPayload } from "./types/Message";
+export type { IPayload, Message } from "./types/Message";
 export { WorldSnapshot } from "./types/snapshots/WorldSnapshot";
 export { DroneSnapshot } from "./types/snapshots/DroneSnapshot";
 export type { SerialisedObstacle } from "./types/SerialisedObstacle";

@@ -36,16 +36,20 @@ export class WorldView {
   }
 
   static fromWorld(world: World): WorldView {
-    return new WorldView({
+    const view = new WorldView({
       chunkSize: world.obstacleHash.chunkSize,
       worldSize: world.size,
       boundsMin: world.bounds.min,
       boundsMax: world.bounds.max,
+      dt: world.dt,
       networkConfig: {} as NetworkConfig,
       seed: 0,
       algorithmConfig: {} as AlgorithmConfig,
       spawnStrategy: {} as SpawnStrategy,
     } as SimulationConfig)
+    view.tick = world.tick;
+    view.elapsedSec = world.elapsedSec;
+    return view;
   }
 
   public isDroneCollidingWithObstacle(drone: Drone): boolean {

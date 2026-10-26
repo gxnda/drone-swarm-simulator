@@ -1,7 +1,7 @@
 # TODO
 
 - [x] Implement 2D sim for MANETs and VANETs
-- [ ] Actually use dt properly so then speeds can be realistically adjusted, this needs to be done before NS-3
+- [x] Actually use dt properly so then speeds can be realistically adjusted, this needs to be done before NS-3
   integration so then NS-3 can run for 1/dt seconds.
 - [ ] Implement some more mobility models
     - [x] Random Waypoint Model

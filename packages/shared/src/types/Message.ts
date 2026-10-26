@@ -1,4 +1,4 @@
-import {DroneId} from "./DroneId";
+import { DroneId } from "./DroneId";
 
 export interface IPayload {
     type: string

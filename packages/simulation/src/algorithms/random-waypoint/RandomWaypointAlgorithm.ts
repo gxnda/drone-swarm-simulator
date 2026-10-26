@@ -15,7 +15,7 @@ export class RandomWaypointAlgorithm implements ICoordinationAlgorithm {
     readonly CountdownsUntilMovement: Map<DroneId, number>;
 
     constructor(config: RandomWaypointConfig) {
-        // Doesn't use a threshold distance, we use drone max speed, since that is movement speed per tick.
+        // The threshold is based on the distance covered by one timestep.
         this.id = config.id;
         this.rng = new SeededRng(config.rngSeed);
         this.pauseTime = config.pauseTicks;
@@ -53,7 +53,7 @@ export class RandomWaypointAlgorithm implements ICoordinationAlgorithm {
         const targetLocation = this.targetLocationMap.get(drone.id)!;
         const unscaledDirection = new Vector3().subVectors(targetLocation, drone.location);
         const distance = unscaledDirection.length();
-        if (distance < (drone.maxSpeed ?? 50)) {
+        if (distance < (drone.maxSpeed ?? 50) * world.dt) {
             this.CountdownsUntilMovement.set(drone.id, this.pauseTime);
             this.targetLocationMap.delete(drone.id);
             return new Vector3(0, 0, 0);

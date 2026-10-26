@@ -83,9 +83,9 @@ export const DEFAULT_CONFIG: SimulationConfig = {
         }
     },
     obstacles: [],
-    droneMaxSpeed: 0.1,
+    droneMaxSpeed: 2,
     droneMinSpeed: 0.1,
-    droneMaxAccel: 1,
+    droneMaxAccel: 0.5,
     droneMaxAngularAccel: 1,
     proportionOf2DDrones: 0.4,
     droneCommunicationRange: 6,

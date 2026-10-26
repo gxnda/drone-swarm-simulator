@@ -20,12 +20,12 @@ export class Bounds {
         if (behaviour) this.preferredBehaviour = behaviour;
     }
 
-    public doPreferred(p: Vector3, v: Vector3, saveTo: Vector3): { p: Vector3, v: Vector3 } {
+    public doPreferred(p: Vector3, v: Vector3, saveTo: Vector3, dt: number = 1): { p: Vector3, v: Vector3 } {
         switch (this.preferredBehaviour) {
             case BoundaryBehaviour.CLAMP:
                 return {p: this.clamp(p, saveTo), v: v};
             case BoundaryBehaviour.REFLECT: {
-                const reflectedVel = this.reflect(p, v);
+                const reflectedVel = this.reflect(p, v, dt);
                 const clampedPos = this.clamp(p, saveTo);
                 return {p: clampedPos, v: reflectedVel};
             }
@@ -53,9 +53,9 @@ export class Bounds {
         return this.box.clampPoint(p, saveTo)
     }
 
-    public reflect(position: Vector3, velocity: Vector3): Vector3 {
+    public reflect(position: Vector3, velocity: Vector3, dt: number = 1): Vector3 {
         // DOES NOT MANIPULATE P.
-        const next = position.clone().add(velocity)
+        const next = position.clone().addScaledVector(velocity, dt)
         const reflectedVelocity = velocity.clone();
         if (this.box.containsPoint(next)) {
             return velocity; // no reflection
